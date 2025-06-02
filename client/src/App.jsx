@@ -28,7 +28,6 @@ import Consultation_page_user from "./pages/User_pages/User_control_page/consult
 import Travel_user_layout from "./pages/User_pages/User_control_page/travel_user/Travel_user_layout";
 import Medicine_product_details from "./pages/User_pages/User_control_page/medicine_user/Medicine_product_details";
 import Travel_Hospital from "./pages/User_pages/User_control_page/travel_user/Travel_Hospital";
-import Consultation_video from "./pages/User_pages/User_control_page/consultation_user/Consultation_video";
 import Consultation_doctor_search from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_search";
 import UserControllerLayout from "./pages/User_Dashboard/UserControllerLayout";
 import UserCost from "./pages/User_Dashboard/UserDashoardController/UserCost";
@@ -37,6 +36,7 @@ import Consultation_doctor_details from "./pages/User_pages/User_control_page/co
 import Consultation_doctor_info from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_info";
 import Consultation_doctor_expariance from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_expariance";
 import Consultation_doctor_education from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_education";
+import Consultation_video from "./pages/User_pages/User_control_page/consultation_user/Consultation_video";
 
 
 const router = createBrowserRouter([
