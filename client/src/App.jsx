@@ -36,7 +36,7 @@ import Consultation_doctor_details from "./pages/User_pages/User_control_page/co
 import Consultation_doctor_info from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_info";
 import Consultation_doctor_expariance from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_expariance";
 import Consultation_doctor_education from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_education";
-import Consultation_video from "./pages/User_pages/User_control_page/consultation_user/Consultation_video";
+
 
 
 const router = createBrowserRouter([
@@ -76,7 +76,6 @@ const router = createBrowserRouter([
             { path : "/user_consultation", element : <Consultation_user_Layout/>,
               children : [
                 { path : "", element : <Consultation_page_user/>},
-                { path : "video", element : <Consultation_video/>},
                 { path : "search", element : <Consultation_doctor_search/>},
                 { path : "doctor", element : <Consultation_doctor_details/>,
                   children : [
