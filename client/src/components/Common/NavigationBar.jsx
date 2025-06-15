@@ -167,56 +167,88 @@ export default function NavigationBar() {
           <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
             {/* Navigation Links (Desktop) */}
             <div className="text-xl md:text-sm lg:text-xl flex space-x-2 md:space-x-6 items-center">
-              <Link to="/user_medicine" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white font-medium">Medicine</Link>
-              <Link to="/user_travel" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white font-medium">Trval</Link>
-              <Link to="/user_consultation" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white font-medium">Doctor</Link>
-              <Link to="/helpline" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white font-medium">Helpline</Link>
+              <Link to="/user_medicine" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white text-sm md:text-lg font-medium">Medicine</Link>
+              <Link to="/user_travel" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white text-sm md:text-lg font-medium">Trval</Link>
+              <Link to="/user_consultation" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white  text-sm md:text-lg font-medium">Doctor</Link>
+              <Link to="/helpline" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white  text-sm md:text-lg font-medium">Helpline</Link>
             </div>
           </div>
         </div>
-
      
       </nav>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <motion.nav
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -40 }}
-          transition={{ duration: 0.5 }}
-          className="md:hidden fixed top-14 left-0 w-full z-50 bg-slate-50 shadow-md p-4 flex flex-col items-center mt-4 space-y-4"
-        >
-          <Link to="/book" className="hover:text-rose-500 text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>Books and Exam</Link>
-          <Link to="/ask" className="hover:text-rose-500 text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>Q/A</Link>
-          <Link to="/about" className="hover:text-rose-500 text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>About</Link>
-
-          {isLoading ? (
-            <p className="text-cyan-800 font-medium">Loading...</p>
-          ) : !data?.user ? (
-            <>
-              <Link to="/auth/login" className="hover:text-rose-500 text-rose-600 font-medium" onClick={() => setIsOpen(false)}>Login</Link>
-              <Link to="/auth/signup" className="hover:text-rose-500 text-rose-600 font-medium" onClick={() => setIsOpen(false)}>Signup</Link>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-4">
-              <button onClick={handleLogout} className="flex items-center gap-2 font-medium text-cyan-800 hover:text-rose-500 cursor-pointer">
-                <p>Logout</p>
-                <LogOut />
-              </button>
-            </div>
-          )}
-
-          <div className="flex items-center border border-gray-300 rounded-full px-3 py-1">
-            <Search className="text-gray-500" size={20} />
-            <input type="text" placeholder="Search..." className="ml-2 outline-none bg-transparent w-52 md:w-48 lg:w-72" />
-          </div>
-        </motion.nav>
-      )}
     </>
   );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  {isOpen && (
+//         <motion.nav
+//           initial={{ opacity: 0, y: -40 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           exit={{ opacity: 0, y: -40 }}
+//           transition={{ duration: 0.5 }}
+//           className="md:hidden fixed top-14 left-0 w-full z-50 bg-slate-50 shadow-md p-4 flex flex-col items-center mt-4 space-y-4"
+//         >
+//           <Link to="/book" className="hover:text-rose-500 text-sm :text-md text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>Books and Exam</Link>
+//           <Link to="/ask" className="hover:text-rose-500 text-sm :text-md text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>Q/A</Link>
+//           <Link to="/about" className="hover:text-rose-500 text-sm :text-md text-cyan-800 font-medium" onClick={() => setIsOpen(false)}>About</Link>
+
+//           {isLoading ? (
+//             <p className="text-cyan-800 font-medium">Loading...</p>
+//           ) : !data?.user ? (
+//             <>
+//               <Link to="/auth/login" className="hover:text-rose-500 text-rose-600 font-medium" onClick={() => setIsOpen(false)}>Login</Link>
+//               <Link to="/auth/signup" className="hover:text-rose-500 text-rose-600 font-medium" onClick={() => setIsOpen(false)}>Signup</Link>
+//             </>
+//           ) : (
+//             <div className="flex flex-col items-center gap-4">
+//               <button onClick={handleLogout} className="flex items-center gap-2 font-medium text-cyan-800 hover:text-rose-500 cursor-pointer">
+//                 <p>Logout</p>
+//                 <LogOut />
+//               </button>
+//             </div>
+//           )}
+
+//           <div className="flex items-center border border-gray-300 rounded-full px-3 py-1">
+//             <Search className="text-gray-500" size={20} />
+//             <input type="text" placeholder="Search..." className="ml-2 outline-none bg-transparent w-52 md:w-48 lg:w-72" />
+//           </div>
+//         </motion.nav>
+//       )}
 
   //  <div className="max-w-6xl mx-auto px-4 bg-green-500 flex justify-between items-center">
   //         {/* Mobile Menu Button */}

@@ -37,7 +37,7 @@ export default function Home_hero_section() {
   ];
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto pt-2">
+    <div className="w-full max-w-screen-xl mx-auto pt-0 md:pt-2">
       <Slider {...settings}>
         {images.map((slide, index) => (
           <div key={index} className="relative">

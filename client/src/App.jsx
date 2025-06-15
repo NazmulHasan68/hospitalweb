@@ -36,6 +36,15 @@ import Consultation_doctor_details from "./pages/User_pages/User_control_page/co
 import Consultation_doctor_info from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_info";
 import Consultation_doctor_expariance from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_expariance";
 import Consultation_doctor_education from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_education";
+import ProductList from "./pages/Medicine_manager/medicine_control_page/ProductList";
+import ClientList from "./pages/Medicine_manager/medicine_control_page/ClientList";
+import CheckOrders from "./pages/Medicine_manager/medicine_control_page/CheckOrders";
+import ProcessingOrders from "./pages/Medicine_manager/medicine_control_page/ProcessingOrders";
+import CompleteOrders from "./pages/Medicine_manager/medicine_control_page/CompleteOrders";
+import RejectedOrders from "./pages/Medicine_manager/medicine_control_page/RejectedOrders";
+import StaffPanel from "./pages/Medicine_manager/medicine_control_page/StaffPanel";
+import SupportList from "./pages/Medicine_manager/medicine_control_page/SupportList";
+import Profile from "./pages/Medicine_manager/medicine_control_page/Profile";
 
 
 
@@ -117,8 +126,17 @@ const router = createBrowserRouter([
 
       {// ============================================ =========== this section is only for medicine 
         path : "medicine" , element : <MedicineLayout/>,
-        children : [
-          { path : "dashboard", element : <Medicine_Dashboard/>}
+        children: [
+            { path: 'dashboard', element: <Medicine_Dashboard /> },
+            { path: 'products', element: <ProductList /> },
+            { path: 'clients', element: <ClientList /> },
+            { path: 'orders/check', element: <CheckOrders /> },
+            { path: 'orders/processing', element: <ProcessingOrders /> },
+            { path: 'orders/complete', element: <CompleteOrders /> },
+            { path: 'orders/rejected', element: <RejectedOrders /> },
+            { path: 'staff', element: <StaffPanel /> },
+            { path: 'support', element: <SupportList /> },
+            { path: 'profile', element: <Profile /> },
         ]
       },
 
