@@ -1,16 +1,23 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Travel_Sidebar from './Travel_Sidebar'
+import Mobile_travel_sidebar from './Mobile_travel_sidebar'
 
 export default function TravelLayout() {
   return (
-    <div className='mt-20 flex '>
-        <div className=' basis-1/5 bg-red-500 p-4'>
-            <Travel_Sidebar/>
+    <div className='mt-20 flex flex-col gap-6 md:flex-row max-w-7xl md:mx-auto'>
+        <div className=' basis-1/5 bg-blue-500 text-white font-medium'>
+            <div className='hidden md:block'>
+                <Travel_Sidebar/>
+            </div>
+            <div className='md:hidden block'>
+              <Mobile_travel_sidebar/>
+            </div>
         </div>
-        <div className='basis-4/5 bg-green-500 p-4'>
+        <div className='basis-4/5 pt-2 md:pt-8'>
             <Outlet/>
         </div>
     </div>
   )
 }
+

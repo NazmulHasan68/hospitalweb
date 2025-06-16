@@ -45,6 +45,49 @@ import RejectedOrders from "./pages/Medicine_manager/medicine_control_page/Rejec
 import StaffPanel from "./pages/Medicine_manager/medicine_control_page/StaffPanel";
 import SupportList from "./pages/Medicine_manager/medicine_control_page/SupportList";
 import Profile from "./pages/Medicine_manager/medicine_control_page/Profile";
+import Travel_hospital_list from "./pages/Travel_manager/Travel_control_page/Travel_hospital_list";
+import Travel_Patient_list from "./pages/Travel_manager/Travel_control_page/Travel_Patient_list";
+import Travel_new_appointment from "./pages/Travel_manager/Travel_control_page/Travel_new_appointment";
+import Travel_processing from "./pages/Travel_manager/Travel_control_page/Travel_processing";
+import Travel_complete_processing from "./pages/Travel_manager/Travel_control_page/Travel_complete_processing";
+import Travel_rejected from "./pages/Travel_manager/Travel_control_page/Travel_rejected";
+import Travel_staff_panel from "./pages/Travel_manager/Travel_control_page/Travel_staff_panel";
+import Travel_support_list from "./pages/Travel_manager/Travel_control_page/Travel_support_list";
+import Travel_profile from "./pages/Travel_manager/Travel_control_page/Travel_profile";
+import Consultation_hospital_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_hospital_list";
+import Consultation_doctor_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_doctor_list";
+import Consultation_spespalist from "./pages/Consultaion_manager/consultation_control_page/Consultation_spespalist";
+import Consultation_appointments from "./pages/Consultaion_manager/consultation_control_page/Consultation_appointments";
+import Consultation_shedule from "./pages/Consultaion_manager/consultation_control_page/Consultation_shedule";
+import Consultation_Complete from "./pages/Consultaion_manager/consultation_control_page/Consultation_Complete";
+import Consultation_Rejected from "./pages/Consultaion_manager/consultation_control_page/Consultation_Rejected";
+import Consultation_staff_panel from "./pages/Consultaion_manager/consultation_control_page/Consultation_staff_panel";
+import Consultation_support_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_support_list";
+import Admin_patient_list from "./pages/Admin_pages/admin_control_page/Admin_Patient_list";
+import Admin_doctor_list from "./pages/Admin_pages/admin_control_page/Admin_doctor_list";
+import Admin_employee_list from "./pages/Admin_pages/admin_control_page/Admin_employee_list";
+import Admin_hospital_list from "./pages/Admin_pages/admin_control_page/Admin_hospital_list";
+import Admin_country_hospital_list from "./pages/Admin_pages/admin_control_page/Admin_country_hospital_list";
+import Admin_medicine from "./pages/Admin_pages/admin_control_page/Admin_medicine";
+import Admin_travel from "./pages/Admin_pages/admin_control_page/Admin_travel";
+import Admin_consultation from "./pages/Admin_pages/admin_control_page/Admin_consultation";
+import Admin_add_banner from "./pages/Admin_pages/admin_control_page/Admin_add_banner";
+import Admin_profites from "./pages/Admin_pages/admin_control_page/Admin_profites";
+import Doctor_deashboard from "./pages/Doctor_pages/doctor_control_page/Doctor_deashboard";
+import Doctor_new_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_new_patient";
+import Doctor_return_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_return_patient";
+import Doctor_member_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_member_patient";
+import Doctor_shedule_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_shedule_patient";
+import Doctor_active_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_active_patient";
+import Doctor_complte_treatment from "./pages/Doctor_pages/doctor_control_page/Doctor_complte_treatment";
+import Doctor_reject_treatment from "./pages/Doctor_pages/doctor_control_page/Doctor_reject_treatment";
+import Doctor_support_list from "./pages/Doctor_pages/doctor_control_page/Doctor_support_list";
+import User_dasboard from "./pages/User_Dashboard/UserDashoardController/User_dasboard";
+import User_medicine from "./pages/User_Dashboard/UserDashoardController/User_medicine";
+import User_travel from "./pages/User_Dashboard/UserDashoardController/User_travel";
+import User_doctor from "./pages/User_Dashboard/UserDashoardController/User_doctor";
+import User_order from "./pages/User_Dashboard/UserDashoardController/User_order";
+import User_peronal from "./pages/User_Dashboard/UserDashoardController/User_peronal";
 
 
 
@@ -101,26 +144,59 @@ const router = createBrowserRouter([
       {// ============================================ ========= this section is only for controler section
         path : "user_panel", element : <UserControllerLayout/>,
         children : [
-          { path : "cost", element : <UserCost/> }
-        ]
-      },
-      { // ============================================ ========= this section is only for admin section 
-        path : "admin" , element : <AdminLayout/>,
-        children : [
-          { path : "dashboard", element : <Admin_Dashboard/>}
+          { path : "dashboard", element : <User_dasboard/> },
+          { path : "medicine", element : <User_medicine/> },
+          { path : "travel", element : <User_travel/> },
+          { path : "doctor", element : <User_doctor/> },
+          { path : "order_comfirm", element : <User_order/> },
+          { path : "personal", element : <User_peronal/> },
         ]
       },
       {// ============================================ =========== this section is only for doctor 
         path : "doctor" , element : <DoctorLayout/>,
         children : [
-          { path : "pateint", element : <Doctor_patient/>}
+          { path : "dashboard", element : <Doctor_deashboard/>},
+          { path : "new_patient", element : <Doctor_new_patient/>},
+          { path : "return_patient", element : <Doctor_return_patient/>},
+          { path : "member_patient", element : <Doctor_member_patient/>},
+          { path : "shedule_patient", element : <Doctor_shedule_patient/>},
+          { path : "active_patient", element : <Doctor_active_patient/>},
+          { path : "complete_treatment", element : <Doctor_complte_treatment/>},
+          { path : "reject_treatment", element : <Doctor_reject_treatment/>},
+          { path : "support_list", element : <Doctor_support_list/>},
+        ]
+      },
+      
+      { // ============================================ ========= this section is only for admin section 
+        path : "admin" , element : <AdminLayout/>,
+        children : [
+          { path : "dashboard", element : <Admin_Dashboard/>},
+          { path : "patient", element : <Admin_patient_list/>},
+          { path : "doctor", element : <Admin_doctor_list/>},
+          { path : "employee", element : <Admin_employee_list/>},
+          { path : "hospital", element : <Admin_hospital_list/>},
+          { path : "country_hospital", element : <Admin_country_hospital_list/>},
+          { path : "medicine", element : <Admin_medicine/>},
+          { path : "travel", element : <Admin_travel/>},
+          { path : "consultation", element : <Admin_consultation/>},
+          { path : "profits", element : <Admin_profites/>},
+          { path : "add_banner", element : <Admin_add_banner/>},
         ]
       },
 
       {// ============================================ =========== this section is only for travel 
         path : "travel" , element : <TravelLayout/>,
         children : [
-          { path : "dashboard", element : <Travel_Dashboard/>}
+          { path : "dashboard", element : <Travel_Dashboard/>},
+          { path : "hospital", element : <Travel_hospital_list/>},
+          { path : "patient", element : <Travel_Patient_list/>},
+          { path : "new_appointment", element : <Travel_new_appointment/>},
+          { path : "processing", element : <Travel_processing/>},
+          { path : "complete", element : <Travel_complete_processing/>},
+          { path : "rejected", element : <Travel_rejected/>},
+          { path : "staff_panel", element : <Travel_staff_panel/>},
+          { path : "support_ist", element : <Travel_support_list/>},
+          { path : "profile", element : <Travel_profile/>},
         ]
       },
 
@@ -143,7 +219,16 @@ const router = createBrowserRouter([
       {// ============================================ =========== this section is only for consultation 
         path : "consultation" , element : <ConsultationLayout/>,
         children : [
-          { path : "dashboard", element : <Consultation_Dashboard/>}
+          { path : "dashboard", element : <Consultation_Dashboard/>},
+          { path : "hospital", element : <Consultation_hospital_list/>},
+          { path : "doctor", element : <Consultation_doctor_list/>},
+          { path : "spespalist", element : <Consultation_spespalist/>},
+          { path : "appointments", element : <Consultation_appointments/>},
+          { path : "shedule", element : <Consultation_shedule/>},
+          { path : "complete", element : <Consultation_Complete/>},
+          { path : "rejected", element : <Consultation_Rejected/>},
+          { path : "staff_panel", element : <Consultation_staff_panel/>},
+          { path : "support_list", element : <Consultation_support_list/>},
         ]
       },
     ]

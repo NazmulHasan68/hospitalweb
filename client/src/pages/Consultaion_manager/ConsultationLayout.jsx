@@ -1,16 +1,26 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Consultation_sidebar from './Consultation_sidebar'
+import Mobile_consultation_sidebar from './Mobile_consultation_sidebar'
 
 export default function ConsultationLayout() {
   return (
-   <div className='mt-20 flex '>
-        <div className=' basis-1/5 bg-red-500 p-4'>
-            <Consultation_sidebar/>
+     <div className='mt-20 flex flex-col gap-6 md:flex-row max-w-7xl md:mx-auto'>
+            <div className=' basis-1/5 bg-blue-500 text-white font-medium'>
+                <div className='hidden md:block'>
+                   <Consultation_sidebar/>
+                </div>
+                <div className='md:hidden block'>
+                  <Mobile_consultation_sidebar/>
+                </div>
+            </div>
+            <div className='basis-4/5 pt-2 md:pt-8'>
+                <Outlet/>
+            </div>
         </div>
-        <div className='basis-4/5 bg-green-500 p-4'>
-            <Outlet/>
-        </div>
-    </div>
   )
 }
+
+
+
+

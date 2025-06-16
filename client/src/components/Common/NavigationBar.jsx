@@ -104,6 +104,15 @@ export default function NavigationBar() {
                           <Link to={'admin'} className="text-blue-500 hover:text-blue-700">
                             Admin Panel
                           </Link>
+                          <Link to={'travel'} className="text-blue-500 hover:text-blue-700">
+                            Travel Panel
+                          </Link>
+                          <Link to={'consultation'} className="text-blue-500 hover:text-blue-700">
+                            Consultation Panel
+                          </Link>
+                          <Link to={'medicine'} className="text-blue-500 hover:text-blue-700">
+                            medicine Panel
+                          </Link>
                         </DropdownMenuItem>
                       ) : null
                     }
@@ -152,6 +161,17 @@ export default function NavigationBar() {
                         </DropdownMenuItem>
                       ) : null
                     }
+
+                    {
+                      data?.user.role == 'homio' ? (
+                        <DropdownMenuItem>
+                          <Link to={'homio'} className="text-blue-500 hover:text-blue-700">
+                            Homio Doctor Panel
+                          </Link>
+                        </DropdownMenuItem>
+                      ) : null
+                    }
+
                   </DropdownMenuContent>
                 </DropdownMenu>
 
