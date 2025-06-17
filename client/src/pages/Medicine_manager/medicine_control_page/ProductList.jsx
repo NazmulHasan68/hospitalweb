@@ -107,12 +107,13 @@ export default function ProductList() {
 // ----------------------------------------
 // ✅ AddMedicine Dialog Component
 // ----------------------------------------
+
 const AddMedicine = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     brand: "",
     description: "",
-    images: [null],
+    images: [null], // start with one empty slot
     category: "",
     country: "",
     company: "",
@@ -122,18 +123,16 @@ const AddMedicine = () => {
     productionDate: "",
     expiryDate: "",
     warning: "",
-    prescriptionRequired: false
-  });
+    prescriptionRequired: false,
+  };
 
-  const [createMedicine, { isLoading }] = useCreateMedicineMutation(); 
+  const [formData, setFormData] = useState(initialFormData);
+  const [createMedicine, { isLoading }] = useCreateMedicineMutation();
+  const [open, setOpen] = useState(false);
 
-  const handleChange = (e, index) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "images" && typeof index === "number") {
-      return; 
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e, index) => {
@@ -154,21 +153,25 @@ const AddMedicine = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const form = new FormData();
-    for (const key in formData) {
+
+    Object.entries(formData).forEach(([key, value]) => {
       if (key === "images") {
-        formData.images.forEach((file) => {
-          if (file) form.append("images", file); 
+        value.forEach((file) => {
+          if (file instanceof File) {
+            form.append("images", file);
+          }
         });
       } else {
-        form.append(key, formData[key]);
+        form.append(key, value);
       }
-    }
+    });
 
     try {
-      await createMedicine(form).unwrap(); 
+      await createMedicine(form).unwrap();
       toast.success("Medicine added successfully!");
+      setFormData(initialFormData); // reset form
+      setOpen(false); // close dialog
     } catch (error) {
       console.error("Error submitting medicine:", error);
       toast.error("Failed to add medicine.");
@@ -176,9 +179,9 @@ const AddMedicine = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Medicine</Button>
+        <Button onClick={() => setOpen(true)}>Add Medicine</Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -192,17 +195,33 @@ const AddMedicine = () => {
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Name</Label>
-              <Input name="name" required onChange={handleChange} />
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
             </div>
             <div>
-              <Label>Brand</Label>
-              <Input name="brand" onChange={handleChange} />
+              <Label htmlFor="brand">Brand</Label>
+              <Input
+                id="brand"
+                name="brand"
+                value={formData.brand}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="col-span-2">
-              <Label>Description</Label>
-              <Textarea name="description" onChange={handleChange} />
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
             </div>
 
             {formData.images.map((imgFile, index) => (
@@ -223,6 +242,7 @@ const AddMedicine = () => {
                 )}
               </div>
             ))}
+
             <Button
               type="button"
               onClick={addImageField}
@@ -233,59 +253,94 @@ const AddMedicine = () => {
             </Button>
 
             <div>
-              <Label>Category</Label>
-              <Input name="category" required onChange={handleChange} />
-            </div>
-            <div>
-              <Label>Country</Label>
-              <Input name="country" onChange={handleChange} />
-            </div>
-            <div>
-              <Label>Company</Label>
-              <Input name="company" onChange={handleChange} />
-            </div>
-            <div>
-              <Label>Price</Label>
+              <Label htmlFor="category">Category</Label>
               <Input
+                id="category"
+                name="category"
+                required
+                value={formData.category}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="country">Country</Label>
+              <Input
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="company">Company</Label>
+              <Input
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="price">Price</Label>
+              <Input
+                id="price"
                 name="price"
                 type="number"
                 required
+                value={formData.price}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label>Discount (%)</Label>
-              <Input name="discount" type="number" onChange={handleChange} />
+              <Label htmlFor="discount">Discount (%)</Label>
+              <Input
+                id="discount"
+                name="discount"
+                type="number"
+                value={formData.discount}
+                onChange={handleChange}
+              />
             </div>
             <div>
-              <Label>Stock</Label>
+              <Label htmlFor="stock">Stock</Label>
               <Input
+                id="stock"
                 name="stock"
                 type="number"
                 required
+                value={formData.stock}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label>Production Date</Label>
+              <Label htmlFor="productionDate">Production Date</Label>
               <Input
+                id="productionDate"
                 name="productionDate"
                 type="date"
+                value={formData.productionDate}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label>Expiry Date</Label>
+              <Label htmlFor="expiryDate">Expiry Date</Label>
               <Input
+                id="expiryDate"
                 name="expiryDate"
                 type="date"
+                value={formData.expiryDate}
                 onChange={handleChange}
               />
             </div>
 
             <div className="col-span-2">
-              <Label>Warning</Label>
-              <Textarea name="warning" onChange={handleChange} />
+              <Label htmlFor="warning">Warning</Label>
+              <Textarea
+                id="warning"
+                name="warning"
+                value={formData.warning}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="flex items-center gap-2 col-span-2">
@@ -294,9 +349,7 @@ const AddMedicine = () => {
                 checked={formData.prescriptionRequired}
                 onCheckedChange={handleCheckbox}
               />
-              <Label htmlFor="prescriptionRequired">
-                Prescription Required
-              </Label>
+              <Label htmlFor="prescriptionRequired">Prescription Required</Label>
             </div>
           </div>
 

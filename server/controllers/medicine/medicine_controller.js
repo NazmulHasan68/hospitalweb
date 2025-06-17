@@ -2,18 +2,25 @@ import Medicine from '../../models/medicine/medicine_schema.js';
 
 // @desc Create a new medicine
 export const createMedicine = async (req, res) => {
-
- const user = req.user; 
- console.log("User adding medicine:", user);
-
+  const user = req.user;
   try {
-    const medicine = new Medicine(req.body);
+    const imagePaths = req.files?.map(file => `/medicine_photo/${file.filename}`) || [];
+
+    const medicineData = {
+      ...req.body,
+      images: imagePaths,
+      createdBy : user._id
+    };
+
+    const medicine = new Medicine(medicineData);
     const saved = await medicine.save();
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+
+
 
 // @desc Get all medicines
 export const getAllMedicines = async (req, res) => {

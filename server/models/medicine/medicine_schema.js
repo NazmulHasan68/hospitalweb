@@ -6,7 +6,7 @@ const MedicineSchema = new mongoose.Schema(
     name: { type: String, required: true },
     brand: { type: String },
     description: { type: String },
-    images: [{ type: String }], // <-- multiple image URLs
+    images: [{ type: String }],
 
     // Classification
     category: { type: String, required: true },
