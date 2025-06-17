@@ -18,6 +18,9 @@ const MedicineSchema = new mongoose.Schema(
     discount: { type: Number },
     stock: { type: Number, required: true },
 
+    //Production date
+    productionDate: {type:Date},
+
     // Expiry & warnings
     expiryDate: { type: Date },
     warning: { type: String }, // renamed from "worring"

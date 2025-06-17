@@ -7,6 +7,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dbconnection } from './utills/dbConnection.js';
 import authanticationRoute from './routes/authentication.route.js'
+import medicineRoute from './routes/medicine/medicine_route.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,9 +34,11 @@ app.use(
     })
 );
 
+app.use('/public', express.static(path.join(process.cwd(), 'public')));
 
 //called api 
-app.use('/api/auth', authanticationRoute)
+app.use('/api/auth', authanticationRoute);
+app.use('/api/medicine', medicineRoute)
 
 
 // Routes

@@ -2,6 +2,10 @@ import Medicine from '../../models/medicine/medicine_schema.js';
 
 // @desc Create a new medicine
 export const createMedicine = async (req, res) => {
+
+ const user = req.user; 
+ console.log("User adding medicine:", user);
+
   try {
     const medicine = new Medicine(req.body);
     const saved = await medicine.save();

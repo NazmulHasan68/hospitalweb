@@ -24,14 +24,13 @@ export default function UserSidebar() {
     { label: 'Travel appointment', icon: <Users size={20} />, to: '/user_panel/travel' },
     { label: 'Doctor shedule', icon: <Users size={20} />, to: '/user_panel/doctor' },
     { label: 'Order Comfirm', icon: <Users size={20} />, to: '/user_panel/order_comfirm' },
-    { label: 'Personal details', icon: <Users size={20} />, to: '/user_panel/personal' },
   ];
 
   return (
     <aside className="bg-blue-950 text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
       {/* Profile Section */}
       <Link
-        to="/doctor/profile"
+        to="/user_panel/personal"
         className="flex items-center gap-4 mb-6 border-b border-blue-800 mt-6 pb-4 hover:opacity-90 transition"
       >
         <img

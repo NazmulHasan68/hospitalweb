@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './RootReducer';
 import { authApi } from './ApiController/authApi';
+import { medicineApi } from './ApiController/medicineApi';
 
 
 export const appStore = configureStore({
     reducer: rootReducer,
     middleware: (defaultMiddleware) =>
-        defaultMiddleware().concat(authApi.middleware),
+        defaultMiddleware().concat(authApi.middleware, medicineApi.middleware),
 });
 
 

@@ -100,7 +100,7 @@ export default function NavigationBar() {
                     </DropdownMenuItem>
                     {
                       data?.user.role == 'Admin' ? (
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="flex flex-col gap-2 items-start">
                           <Link to={'admin'} className="text-blue-500 hover:text-blue-700">
                             Admin Panel
                           </Link>
