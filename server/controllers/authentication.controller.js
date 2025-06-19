@@ -9,8 +9,7 @@ const generateOTP = () => String(Math.floor(100000 + Math.random() * 900000));
 //register
 export const register = async (req, res) => {
     const { name, phone, password } = req.body;
-    console.log(name, phone, password);
-    
+
     if (!name || !phone || !password) {
         return res.status(400).json({ success: false, message: "Data is missing!" });
     }

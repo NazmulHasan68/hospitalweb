@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { dbconnection } from './utills/dbConnection.js';
 import authanticationRoute from './routes/authentication.route.js'
 import medicineRoute from './routes/medicine/medicine_route.js'
+import saffRoute from './routes/staff_Routes.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +20,7 @@ if (!fs.existsSync(logDir)) {
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 6000;
 
 // Middleware
 app.use(express.json());
@@ -35,10 +36,12 @@ app.use(
 );
 
 app.use('/public', express.static(path.join(process.cwd(), 'public')));
+app.use("/photo", express.static(path.join(process.cwd(), "public", "photo")));
 
 //called api 
 app.use('/api/auth', authanticationRoute);
-app.use('/api/medicine', medicineRoute)
+app.use('/api/medicine', medicineRoute);
+app.use('/api/staff', saffRoute)
 
 
 // Routes

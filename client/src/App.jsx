@@ -88,6 +88,7 @@ import User_travel from "./pages/User_Dashboard/UserDashoardController/User_trav
 import User_doctor from "./pages/User_Dashboard/UserDashoardController/User_doctor";
 import User_order from "./pages/User_Dashboard/UserDashoardController/User_order";
 import User_peronal from "./pages/User_Dashboard/UserDashoardController/User_peronal";
+import StaffDetails from "./pages/Medicine_manager/medicine_control_page/StaffDetails";
 
 
 
@@ -138,6 +139,7 @@ const router = createBrowserRouter([
                 }
               ]
             },
+            { path: 'staff/:staffId', element: <StaffDetails /> } // stafffff
         ]
       },
 

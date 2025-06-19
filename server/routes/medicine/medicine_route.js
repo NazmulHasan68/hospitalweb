@@ -37,11 +37,11 @@ const router = express.Router();
 
 
 router.post('/create', isAuthenticateFormedicine, upload.array('images', 5), createMedicine);
-router.put('/update/:id', isAuthenticateFormedicine, updateMedicine);
+router.put('/update/:id', isAuthenticateFormedicine, upload.array("images", 5), updateMedicine);
 router.delete('/delete/:id', isAuthenticateFormedicine, deleteMedicine);
 
 // Public routes
-router.get('/', getAllMedicines);
+router.get('/all', getAllMedicines);
 router.get('/search', searchMedicines);
 router.get('/:id', getMedicineById);
 

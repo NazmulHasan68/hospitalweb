@@ -19,13 +19,13 @@ export const medicineApi = createApi({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ["Medicines"], // auto-refresh medicine list
+      invalidatesTags: ["Medicines"], 
     }),
 
     // Get all medicines
     getAllMedicines: builder.query({
       query: () => ({
-        url: "/all", // adjust if your backend uses a different endpoint
+        url: "/all", 
         method: "GET",
       }),
       providesTags: ["Medicines"],
@@ -50,10 +50,11 @@ export const medicineApi = createApi({
 
     // Update a medicine by ID
     updateMedicine: builder.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id, formData }) => ({
         url: `/update/${id}`,
         method: "PUT",
-        body: data,
+        body: formData,
+        formData: true, 
       }),
       invalidatesTags: ["Medicines"],
     }),

@@ -1,11 +1,8 @@
+import { categories } from '@/components/Common/data';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
-const categories = [
-  "Women's Choice", "Sexual Wellness", "Skin Care", "Diabetic Care", "Devices",
-  "Supplement", "Diapers", "Baby Care", "Personal Care", "Hygiene & Freshness",
-  "Dental Care", "Herbal Medicine", "Prescription Medicine", "OTC Medicine",
-];
+
 
 export default function MedicineUserSidebar({ onFilterChange }) {
   const location = useLocation();

@@ -1,80 +1,174 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
+import { useDeleteMedicineMutation, useGetAllMedicinesQuery ,useGetMedicineByIdQuery } from "@/redux/ApiController/medicineApi";
+import { Beer, SquareChartGantt, SquarePen } from "lucide-react";
+import { AddMedicine } from "@/components/pages/admin/medicine/Addmedicine";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
   DialogDescription,
-  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { useCreateMedicineMutation } from "@/redux/ApiController/medicineApi";
-import { toast } from "sonner";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
-const sampleMedicines = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  name: `Medicine ${i + 1}`,
-  price: `$${(5 + i * 0.75).toFixed(2)}`,
-  image: "https://via.placeholder.com/40",
-}));
+import { Button } from "@/components/ui/button";
+import { EditMedicine } from "@/components/pages/admin/medicine/EditMedicine";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { categories } from "@/components/Common/data";
 
 const ITEMS_PER_PAGE = 12;
 
 export default function ProductList() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(sampleMedicines.length / ITEMS_PER_PAGE);
+  const { data } = useGetAllMedicinesQuery();
+  const [deleteMedicine] = useDeleteMedicineMutation();
 
-  const currentMedicines = sampleMedicines.slice(
+  const sampleMedicines = data;
+
+  // Filter States
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Apply filters
+  const filteredMedicines = sampleMedicines?.filter((med) => {
+    const matchesCategory = categoryFilter
+      ? med.category?.toLowerCase() === categoryFilter.toLowerCase()
+      : true;
+
+    const matchesSearch = searchTerm
+      ? med.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        med.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        med.company?.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const totalPages = Math.ceil(filteredMedicines?.length / ITEMS_PER_PAGE);
+
+  const currentMedicines = filteredMedicines?.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  const handleProductDelete = async (id) => {
+    try {
+      await deleteMedicine(id).unwrap();
+      toast.success("Medicine deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete medicine:", error);
+      toast.error("Failed to delete medicine.");
+    }
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Top section */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="text-2xl font-semibold text-blue-600">
-          Total Products: {sampleMedicines.length}
+          Total Products: {filteredMedicines?.length || 0}
         </h2>
         <AddMedicine />
       </div>
 
       {/* Filters */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-sm">
-        <Input placeholder="Category" />
-        <Input placeholder="Company" />
-        <Input placeholder="Country" />
-        <Input
-          className="col-span-2 md:col-span-1"
-          placeholder="Search by product name"
-        />
+        {/* Category Filter */}
+       <div className="w-full">
+        <Label
+          htmlFor="category"
+          className="block mb-1 text-sm font-medium text-gray-700"
+        >
+          Category
+        </Label>
+        <Select
+          value={categoryFilter}
+          onValueChange={(value) => {
+            const formattedValue = value.toLowerCase().replace(/\s+/g, "_");
+            setCategoryFilter(formattedValue);
+            setCurrentPage(1);
+   
+          }}
+        >
+          <SelectTrigger id="category" className="w-full">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories?.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        </div>
+
+
+        {/* Search Input */}
+        <div className="col-span-2 md:col-span-3">
+          <Label htmlFor="search">Search</Label>
+          <Input
+            id="search"
+            placeholder="Search by product name, Country, Company"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
       </div>
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {currentMedicines.map((med) => (
+        {currentMedicines?.map((med) => (
           <div
-            key={med.id}
-            className="bg-white border rounded-xl p-4 shadow-sm hover:shadow-md transition flex items-center gap-4"
+            key={med._id}
+            className="bg-white border rounded-xl p-4 shadow-sm hover:shadow-md transition flex gap-4"
           >
             <img
-              src={med.image}
+              src={`${import.meta.env.VITE_BASE_URL}/public/${
+                med.images?.[0] || "default-image.png"
+              }`}
               alt={med.name}
               className="w-14 h-14 object-cover rounded"
             />
             <div className="flex-1">
-              <h3 className="font-medium text-lg">{med.name}</h3>
-              <p className="text-sm text-gray-500">{med.price}</p>
+              <h3 className="font-medium text-sm line-clamp-1">{med.name}</h3>
+              <p className="text-xs text-gray-500 mt-2">
+                Country : <span className="font-semibold">{med.country}</span>
+              </p>
+              <p className="text-xs text-gray-500">
+                Company : <span className="font-semibold">{med.company}</span>
+              </p>
+              <p className="text-xs text-gray-500">
+                Price : <span className="font-semibold">{med.price}</span>
+              </p>
             </div>
-            <div className="space-x-2 text-sm">
-              <button className="text-blue-600 hover:underline">View</button>
-              <button className="text-yellow-600 hover:underline">Edit</button>
-              <button className="text-red-600 hover:underline">Delete</button>
+            <div className="space-x-2 text-xs flex flex-col gap-1 items-end">
+              {/* Assuming ViewMedicine and EditMedicine are dialog or button components */}
+              {/* Replace with actual functionality as needed */}
+              <button className="text-yellow-600 hover:underline">
+                <EditMedicine id={med._id} />
+              </button>
+              <button
+                className="text-red-600 hover:underline"
+                onClick={() => handleProductDelete(med._id)}
+              >
+                <Beer />
+              </button>
             </div>
           </div>
         ))}
@@ -82,7 +176,7 @@ export default function ProductList() {
 
       {/* Pagination */}
       <div className="flex justify-center mt-8 space-x-2">
-        {[...Array(totalPages)].map((_, i) => (
+        {[...Array(totalPages || 1)]?.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentPage(i + 1)}
@@ -104,262 +198,108 @@ export default function ProductList() {
 
 
 
+
+
+
+
 // ----------------------------------------
 // ✅ AddMedicine Dialog Component
 // ----------------------------------------
 
-const AddMedicine = () => {
-  const initialFormData = {
-    name: "",
-    brand: "",
-    description: "",
-    images: [null], // start with one empty slot
-    category: "",
-    country: "",
-    company: "",
-    price: "",
-    discount: "",
-    stock: "",
-    productionDate: "",
-    expiryDate: "",
-    warning: "",
-    prescriptionRequired: false,
-  };
-
-  const [formData, setFormData] = useState(initialFormData);
-  const [createMedicine, { isLoading }] = useCreateMedicineMutation();
+ const ViewMedicine = ({ id }) => {
+  const { data: med, isLoading, error } = useGetMedicineByIdQuery(id);
+  console.log(med);
+  
+  const [mainImage, setMainImage] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e, index) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const newImages = [...formData.images];
-    newImages[index] = file;
-    setFormData((prev) => ({ ...prev, images: newImages }));
-  };
-
-  const handleCheckbox = (checked) => {
-    setFormData((prev) => ({ ...prev, prescriptionRequired: checked }));
-  };
-
-  const addImageField = () => {
-    setFormData((prev) => ({ ...prev, images: [...prev.images, null] }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = new FormData();
-
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === "images") {
-        value.forEach((file) => {
-          if (file instanceof File) {
-            form.append("images", file);
-          }
-        });
-      } else {
-        form.append(key, value);
-      }
-    });
-
-    try {
-      await createMedicine(form).unwrap();
-      toast.success("Medicine added successfully!");
-      setFormData(initialFormData); // reset form
-      setOpen(false); // close dialog
-    } catch (error) {
-      console.error("Error submitting medicine:", error);
-      toast.error("Failed to add medicine.");
+  useEffect(() => {
+    if (med?.images?.length) {
+      setMainImage(med.images[0]);
     }
-  };
+  }, [med]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>Add Medicine</Button>
+        <div onClick={() => setOpen(true)}><SquareChartGantt /></div>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Add New Medicine</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Fill out the details of your product
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-2xl space-y-4">
+        {isLoading ? (
+          <div className="py-10 text-center">Loading...</div>
+        ) : error || !med ? (
+          <div className="text-red-500">Failed to load medicine details.</div>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>{med.name}</DialogTitle>
+              <DialogDescription>Details for {med.brand}</DialogDescription>
+            </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="brand">Brand</Label>
-              <Input
-                id="brand"
-                name="brand"
-                value={formData.brand}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="col-span-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              />
-            </div>
-
-            {formData.images.map((imgFile, index) => (
-              <div key={index} className="col-span-2 flex flex-col gap-1">
-                <Label>Image #{index + 1}</Label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e, index)}
+            {/* Main Image */}
+            <div className="flex flex-col gap-2">
+              {mainImage && (
+                <img
+                  src={`${import.meta.env.VITE_BASE_URL}/public/${mainImage}`}
+                  alt="Main"
+                  className="w-full h-32 md:h-40 object-cover rounded border"
                 />
-                {imgFile && (
-                  <img
-                    src={URL.createObjectURL(imgFile)}
-                    alt={`Preview ${index + 1}`}
-                    className="w-32 h-32 object-contain mt-2 rounded border"
-                    onLoad={(e) => URL.revokeObjectURL(e.currentTarget.src)}
-                  />
-                )}
+              )}
+
+              {/* Thumbnails */}
+              <div className="flex gap-2 flex-row ">
+                {med.images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setMainImage(img)}
+                    className={`md:w-14 w-10 h-10 md:h-14 border rounded ${
+                      img === mainImage ? "border-blue-500" : "border-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={`${import.meta.env.VITE_BASE_URL}/public/${img}`}
+                      alt={`thumb-${index}`}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </button>
+                ))}
+            </div>
+
+            </div>    
+
+            {/* Info Grid */}
+            <div className="grid md:grid-cols-3 grid-cols-2 gap-1 text-sm">
+              <div><strong>Price:</strong> ৳{med.price}</div>
+              <div><strong>Brand:</strong> {med.brand}</div>
+              <div><strong>Country:</strong> {med.country}</div>
+              <div><strong>Category:</strong> {med.category.replace(/_/g, " ")}</div>
+              <div><strong>Discount:</strong> {med.discount}%</div>
+              <div><strong>Stock:</strong> {med.stock}</div>
+              <div>
+                <strong>Production Date:</strong>{" "}
+                {new Date(med.productionDate).toLocaleDateString()}
               </div>
-            ))}
-
-            <Button
-              type="button"
-              onClick={addImageField}
-              className="w-fit text-sm col-span-2"
-              variant="outline"
-            >
-              + Add Another Image
-            </Button>
-
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Input
-                id="category"
-                name="category"
-                required
-                value={formData.category}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="company">Company</Label>
-              <Input
-                id="company"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                required
-                value={formData.price}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="discount">Discount (%)</Label>
-              <Input
-                id="discount"
-                name="discount"
-                type="number"
-                value={formData.discount}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="stock">Stock</Label>
-              <Input
-                id="stock"
-                name="stock"
-                type="number"
-                required
-                value={formData.stock}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="productionDate">Production Date</Label>
-              <Input
-                id="productionDate"
-                name="productionDate"
-                type="date"
-                value={formData.productionDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="expiryDate">Expiry Date</Label>
-              <Input
-                id="expiryDate"
-                name="expiryDate"
-                type="date"
-                value={formData.expiryDate}
-                onChange={handleChange}
-              />
+              <div>
+                <strong>Expiry Date:</strong>{" "}
+                {new Date(med.expiryDate).toLocaleDateString()}
+              </div>
+              <div className="col-span-2">
+                <strong>Prescription Required:</strong>{" "}
+                {med.prescriptionRequired ? "Yes" : "No"}
+              </div>
+              <div className="col-span-2 line-clamp-4"><strong>Warning:</strong> {med.warning}</div>
+              <div className="col-span-2 line-clamp-5"><strong>Description:</strong> {med.description}</div>
             </div>
 
-            <div className="col-span-2">
-              <Label htmlFor="warning">Warning</Label>
-              <Textarea
-                id="warning"
-                name="warning"
-                value={formData.warning}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex items-center gap-2 col-span-2">
-              <Checkbox
-                id="prescriptionRequired"
-                checked={formData.prescriptionRequired}
-                onCheckedChange={handleCheckbox}
-              />
-              <Label htmlFor="prescriptionRequired">Prescription Required</Label>
-            </div>
-          </div>
-
-          <DialogFooter className="mt-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Submitting..." : "Submit"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button type="button" onClick={() => setOpen(false)} className="bg-red-600 hover:bg-red-700">
+                Close
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
-};
+}
