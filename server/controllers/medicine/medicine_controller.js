@@ -124,14 +124,37 @@ export const deleteMedicine = async (req, res) => {
 // @desc Search medicines by name, category, or brand
 export const searchMedicines = async (req, res) => {
   try {
-    const { query } = req.query;
-    const medicines = await Medicine.find({
-      $or: [
-        { name: { $regex: query, $options: 'i' } },
-        { category: { $regex: query, $options: 'i' } },
-        { brand: { $regex: query, $options: 'i' } }
-      ]
-    });
+    const { query, categories } = req.query;
+
+    const searchConditions = [];
+
+    console.log(query, categories);
+    
+
+    if (query) {
+      searchConditions.push({
+        $or: [
+          { name: { $regex: query, $options: 'i' } },
+          { category: { $regex: query, $options: 'i' } },
+          { brand: { $regex: query, $options: 'i' } }
+        ]
+      });
+    }
+
+    if (categories) {
+      const categoryList = categories
+        .split(',')
+        .map((c) => c.trim().toLowerCase().replace(/\s+/g, '_'));
+
+      searchConditions.push({
+        category: { $in: categoryList }
+      });
+    }
+
+    const medicines = await Medicine.find(
+      searchConditions.length > 0 ? { $and: searchConditions } : {}
+    );
+
     res.status(200).json(medicines);
   } catch (err) {
     res.status(500).json({ error: err.message });

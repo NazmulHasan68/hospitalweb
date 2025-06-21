@@ -1,44 +1,64 @@
 import { categories } from '@/components/Common/data';
+import { useSearchByCategoryOrQueryQuery } from '@/redux/ApiController/medicineApi';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
-
-
-export default function MedicineUserSidebar({ onFilterChange }) {
+export default function MedicineUserSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [checkedCategories, setCheckedCategories] = useState([]);
+  // Extract and normalize URL values back to readable format
+  const initialQuery = searchParams.get('query') || '';
+  const categoryParam = searchParams.get('categories');
+  const initialCategories = categoryParam
+    ? categoryParam.split(',').map((c) =>
+        categories.find(
+          (cat) => cat.toLowerCase().replace(/\s+/g, '_') === c
+        )
+      ).filter(Boolean)
+    : [];
 
-  // Sync from URL when location.search changes (e.g., on refresh or back/forward)
-  useEffect(() => {
-    const paramCategories = searchParams.get('categories');
-    const parsed = paramCategories ? paramCategories.split(',') : [];
-    setCheckedCategories(parsed);
-    onFilterChange?.(parsed); 
-  }, [location.search]);
+  const [query, setQuery] = useState(initialQuery);
+  const [checkedCategories, setCheckedCategories] = useState(initialCategories);
 
-  // Update URL when checkedCategories changes
+  // Update URL when query or categories change
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
+    if (query.trim()) {
+      params.set('query', query);
+    } else {
+      params.delete('query');
+    }
+
     if (checkedCategories.length > 0) {
-      params.set('categories', checkedCategories.join(','));
+      const formatted = checkedCategories.map((c) =>
+        c.toLowerCase().replace(/\s+/g, '_')
+      );
+      params.set('categories', formatted.join(','));
     } else {
       params.delete('categories');
     }
 
-    navigate(
-      { pathname: location.pathname, search: params.toString() },
-      { replace: true }
-    );
-  }, [checkedCategories]);
+    navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+  }, [query, checkedCategories, location.pathname]);
+
+  // Call backend with formatted categories
+  const { data: medicines = [], isLoading, isError } = useSearchByCategoryOrQueryQuery({
+    query,
+    categories: checkedCategories.map((c) =>
+      c.toLowerCase().replace(/\s+/g, '_')
+    ),
+  });
+
+  console.log(medicines);
+  
 
   const handleCheckboxChange = (category) => {
     setCheckedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter((item) => item !== category)
+        ? prev.filter((c) => c !== category)
         : [...prev, category]
     );
   };

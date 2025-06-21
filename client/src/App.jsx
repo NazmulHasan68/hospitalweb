@@ -125,7 +125,7 @@ const router = createBrowserRouter([
             { path : "/user_medicine", element : <Medicine_user_Layout/> ,
               children : [
                 { path : "", element : <Medicine_Page_user/>},
-                { path : "product_detaiils", element : <Medicine_product_details/>}
+                { path : "product_details/:id", element : <Medicine_product_details/>}
               ]
             },
             

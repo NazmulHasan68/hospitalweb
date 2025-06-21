@@ -9,63 +9,75 @@ import {
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { categories } from '@/components/Common/data';
-
+import { useSearchByCategoryOrQueryQuery } from '@/redux/ApiController/medicineApi';
 
 export default function MedicineSearchBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  const initialQuery = searchParams.get('query') || '';
+  const categoryParam = searchParams.get('categories');
+  const initialCategories = categoryParam ? categoryParam.split(',') : [];
+
+  const [query, setQuery] = useState(initialQuery);
+  const [checkedCategories, setCheckedCategories] = useState(initialCategories);
   const [open, setOpen] = useState(false);
 
-  // Initialize checked categories from URL
-  const initialCategories = searchParams.get('categories');
-  const [checkedCategories, setCheckedCategories] = useState(
-    initialCategories ? initialCategories.split(',') : []
-  );
-
-  // Update URL query string when categories change
+  // Update URL when query or categories change
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
+    if (query.trim()) {
+      params.set('query', query);
+    } else {
+      params.delete('query');
+    }
+
     if (checkedCategories.length > 0) {
-      params.set('categories', checkedCategories.join(','));
+      const formatted = checkedCategories.map((c) =>
+        c.toLowerCase().replace(/\s+/g, '_')
+      );
+      params.set('categories', formatted.join(','));
     } else {
       params.delete('categories');
     }
 
-    navigate(
-      { pathname: location.pathname, search: params.toString() },
-      { replace: true }
-    );
-  }, [checkedCategories, location.pathname, location.search, navigate]);
+    navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+  }, [query, checkedCategories, location.pathname]);
 
-  // Toggle checkbox state
+  // Send formatted categories to backend
+  const { data: medicines = [], isLoading, isError } = useSearchByCategoryOrQueryQuery({
+    query,
+    categories: checkedCategories.map((c) =>
+      c.toLowerCase().replace(/\s+/g, '_')
+    ),
+  });
+
   const handleCheckboxChange = (category) => {
     setCheckedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
         : [...prev, category]
     );
-    setOpen(false); 
+    setOpen(false);
   };
 
   return (
-    <div className='flex justify-between items-center gap-2'>
-    
+    <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-5 mb-4">
 
-      {/* Drawer for Mobile Category Filter */}
+
+      {/* Mobile Category Drawer */}
       <div className="md:hidden">
         <Drawer open={open} onOpenChange={setOpen}>
           <DrawerTrigger asChild>
-            <Button variant="default">
+            <Button className="bg-blue-600 hover:bg-blue-700">
               {open ? '✕' : '☰'}
             </Button>
           </DrawerTrigger>
 
           <DrawerContent side="left" className="p-4">
-            <h2 className="text-lg font-bold text-blue-800 mb-4 border-b pb-2">
-              Categories
-            </h2>
+            <h2 className="text-lg font-bold text-blue-800 mb-4 border-b pb-2">Categories</h2>
             <nav className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {categories.map((category, index) => {
                 const isChecked = checkedCategories.includes(category);

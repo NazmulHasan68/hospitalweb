@@ -58,6 +58,15 @@ export const medicineApi = createApi({
       }),
       invalidatesTags: ["Medicines"],
     }),
+
+    searchByCategoryOrQuery: builder.query({
+      query: ({ query = '', categories = [] }) => {
+        const params = new URLSearchParams();
+        if (query) params.set('query', query);
+        if (categories.length > 0) params.set('categories', categories.join(','));
+        return `/search?${params.toString()}`;
+      }
+    })
   }),
 });
 
@@ -67,4 +76,5 @@ export const {
   useGetMedicineByIdQuery,
   useDeleteMedicineMutation,
   useUpdateMedicineMutation,
+  useSearchByCategoryOrQueryQuery
 } = medicineApi;
