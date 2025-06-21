@@ -13,7 +13,7 @@ export default function Medicine_user_Layout() {
         </div>
         
         <div className="w-full md:w-3/4 space-y-4 md:mt-0 -mt-6">
-          <Medicine_search_bar/>
+          {/* <Medicine_search_bar/> */}
           <Outlet />
         </div>
       </div>

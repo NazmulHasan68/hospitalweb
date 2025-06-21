@@ -8,17 +8,8 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
+import { categories } from '@/components/Common/data';
 
-// Category list
-const categories = [
-  "Women's Choice", "Sexual Wellness", "Skin Care", "Diabetic Care", "Devices",
-  "Supplement", "Diapers", "Baby Care", "Personal Care", "Hygiene & Freshness",
-  "Dental Care", "Herbal Medicine", "Prescription Medicine", "OTC Medicine",
-];
-
-// Slugify helper
-const slugify = (text) =>
-  text.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
 
 export default function MedicineSearchBar() {
   const location = useLocation();
@@ -60,18 +51,7 @@ export default function MedicineSearchBar() {
 
   return (
     <div className='flex justify-between items-center gap-2'>
-      <div className='hidden lg:flex font-bold text-blue-600 text-md'>
-        Chose your medicine
-      </div>
-      {/* Search Input */}
-      <div className="bg-white shadow-md rounded-lg w-full flex items-center px-4 py-2 max-w-md mx-auto">
-        <Search className="text-gray-400 mr-2" size={20} />
-        <input
-          type="search"
-          placeholder="Search by medicine or company name "
-          className="w-full text-gray-700 placeholder-gray-400 border-none focus:outline-none"
-        />
-      </div>
+    
 
       {/* Drawer for Mobile Category Filter */}
       <div className="md:hidden">

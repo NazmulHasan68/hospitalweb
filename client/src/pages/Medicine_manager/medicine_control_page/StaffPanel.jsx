@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useGetAllStaffQuery } from "@/redux/ApiController/staffApi";
-import { Search } from "lucide-react";
+import { useGetByDepartmentQuery } from "@/redux/ApiController/staffApi";
+import { FileSpreadsheet, Search } from "lucide-react";
 import { AddEmployee } from "@/components/Common/staff/AddEmployee";
 import { Link } from "react-router-dom";
+import { useLoadUserQuery } from "@/redux/ApiController/authApi";
+import { EditEmployee } from "@/components/Common/staff/EditEmployee";
 
 const ITEMS_PER_PAGE = 8;
 
 export default function StaffPanel() {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const {data} = useLoadUserQuery()
 
-  const { data: staffList = [], isLoading, isError } = useGetAllStaffQuery();
+  const { data: staffList = [], isLoading, isError } = useGetByDepartmentQuery(data?.user?.role);
 
   const filteredStaff = staffList.filter((staff) =>
     staff.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -69,10 +72,9 @@ export default function StaffPanel() {
           </p>
         ) : (
           currentStaff.map((staff) => (
-            <Link
-              to={`/staff/${staff._id}`}
+            <div
               key={staff._id}
-              className="bg-white rounded-lg shadow hover:shadow-lg transition p-5 flex flex-col items-center text-center"
+              className="bg-white rounded-lg shadow hover:shadow-lg transition p-5 flex flex-col items-center text-center relative"
             >
               <img
                 src={`${import.meta.env.VITE_BASE_URL}/public/photo/${staff.photo}`}
@@ -83,7 +85,14 @@ export default function StaffPanel() {
               <p className="text-sm text-blue-600 font-medium">{staff.position}</p>
               <p className="text-xs text-gray-600 mt-2">{staff.email}</p>
               <p className="text-xs text-gray-600">{staff.phone}</p>
-            </Link>
+
+              <div className=" absolute top-1 right-1 ">
+                <EditEmployee staffId={staff._id}/>
+              </div>
+              <Link  to={`/staff/${staff._id}`} className="absolute top-1 left-1 p-2 bg-slate-200 hover:bg-slate-300 text-blue-600 rounded-full">
+                <FileSpreadsheet />
+              </Link>
+            </div>
           ))
         )}
       </div>

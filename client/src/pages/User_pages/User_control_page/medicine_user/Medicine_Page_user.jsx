@@ -1,31 +1,28 @@
 import React, { useState } from 'react';
-import medicineImage from '@/assets/familly1.jpg';
 import { Link } from 'react-router-dom';
+import { useGetAllMedicinesQuery } from '@/redux/ApiController/medicineApi';
+import MedicineSearchBar from './Medicine_search_bar';
 
 export default function Medicine_Page_user() {
-  const medicines = [
-    { id: 1, name: "Medicine 1", price: 500, decount: 15, image: medicineImage },
-    { id: 2, name: "Medicine 2", price: 400, decount: 10, image: medicineImage },
-    { id: 3, name: "Medicine 3", price: 560, decount: 12, image: medicineImage },
-    { id: 4, name: "Medicine 4", price: 570, decount: 19, image: medicineImage },
-    { id: 5, name: "Medicine 5", price: 520, decount: 25, image: medicineImage },
-    { id: 6, name: "Medicine 6", price: 580, decount: 23, image: medicineImage },
-    { id: 7, name: "Medicine 7", price: 600, decount: 20, image: medicineImage },
-    { id: 8, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 9, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 10, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 11, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 12, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 13, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-    { id: 14, name: "Medicine 8", price: 450, decount: 18, image: medicineImage },
-  ];
-
+  const { data: medicines = [], isLoading, isError } = useGetAllMedicinesQuery();
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const totalPages = Math.ceil(medicines.length / itemsPerPage);
+  // Filter medicines based on search input
+  const filteredMedicines = medicines.filter((medi) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      medi.name?.toLowerCase().includes(term) ||
+      medi.company?.toLowerCase().includes(term) ||
+      medi.country?.toLowerCase().includes(term) ||
+      medi.category?.toLowerCase().includes(term)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredMedicines.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = medicines.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = filteredMedicines.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -33,33 +30,70 @@ export default function Medicine_Page_user() {
     }
   };
 
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-screen text-lg text-gray-500">Loading medicines...</div>;
+  }
+
+  if (isError) {
+    return <div className="flex justify-center items-center min-h-screen text-lg text-red-500">Failed to load medicines.</div>;
+  }
+
   return (
-    <div className="min-h-screen ">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="min-h-screen p-2">
+      <div className='md:hidden flex justify-between items-center py-4'>
+        <p>Find Medicine</p>
+        <MedicineSearchBar/>
+      </div>
+      <div className="mb-6 flex justify-between items-center gap-4">
+        <h2 className="md:text-lg text-xs font-semibold text-gray-700">
+          Total:{filteredMedicines.length}
+        </h2>
+        <input
+          type="text"
+          placeholder="Search by name, company, country, category"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // reset to first page on search
+          }}
+          className="w-full sm:w-96 px-4 py-1 md:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {currentItems.map((medi) => (
           <Link
-            to="product_detaiils"
-            key={medi.id}
-            className="group bg-white rounded-xl shadow-md hover:shadow-lg transition duration-200 relative overflow-hidden"
+            to={`/product_details/${medi._id}`}
+            key={medi._id}
+            className="group bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 relative overflow-hidden"
           >
-            <div className="h-40 overflow-hidden rounded-t-xl">
+            <div className="md:h-36 h-32 overflow-hidden rounded-t-xl relative">
               <img
-                src={medi.image}
+                src={
+                  Array.isArray(medi.images) && medi.images.length > 0
+                    ? `${import.meta.env.VITE_BASE_URL}/public${medi.images[0]}`
+                    : "/placeholder.jpg"
+                }
                 alt={medi.name}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <span className="absolute top-2 left-2 bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
-                {medi.decount}% OFF
-              </span>
+
+              {medi.discount && (
+                <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full shadow">
+                  {medi.discount}% OFF
+                </span>
+              )}
             </div>
 
             <div className="p-2">
-              <h3 className="text-lg font-semibold text-gray-800">{medi.name}</h3>
-              <p className="text-gray-600 text-xs">ABC Company Ltd.</p>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-700 font-bold text-md">৳{medi.price}</span>
+              <h3 className="text-sm md:text-md font-bold text-gray-800 truncate line-clamp-1">{medi.name}</h3>
+              <div className='flex justify-between items-center'>
+                <p className="text-gray-500 text-xs mb-1 line-clamp-1">{medi.company || 'Unknown Company'}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-700 font-semibold text-sm md:text-md">৳{medi.price}</span>
+                </div>
               </div>
-              <button className="w-full py-1 mt-2 bg-blue-700 hover:bg-blue-600 text-white rounded-lg transition-all duration-200">
+              <button className="w-full mt-3 py-1 md:py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 text-sm">
                 Add to Cart
               </button>
             </div>
@@ -68,7 +102,7 @@ export default function Medicine_Page_user() {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-6 gap-2">
+      <div className="flex justify-center mt-10 gap-2 flex-wrap">
         <button
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
@@ -77,12 +111,14 @@ export default function Medicine_Page_user() {
           Prev
         </button>
 
-        {[...Array(totalPages)].map((_, i) => (
+        {[...Array(totalPages)]?.map((_, i) => (
           <button
             key={i}
             onClick={() => goToPage(i + 1)}
             className={`px-3 py-1 rounded-md ${
-              currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              currentPage === i + 1
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 hover:bg-gray-300'
             }`}
           >
             {i + 1}

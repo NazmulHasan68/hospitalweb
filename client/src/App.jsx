@@ -114,18 +114,21 @@ const router = createBrowserRouter([
         children : [
             { path : "", element : <Home_page/>},
             { path : "/helpline", element:<HelpLine/>},
+
             { path : "/user_travel", element :<Travel_user_layout/> ,
               children : [
                 { path : "", element : <Travel_page_ueser/>},
                 { path : "hospital", element : <Travel_Hospital/>}
               ]
             },
+
             { path : "/user_medicine", element : <Medicine_user_Layout/> ,
               children : [
                 { path : "", element : <Medicine_Page_user/>},
                 { path : "product_detaiils", element : <Medicine_product_details/>}
               ]
             },
+            
             { path : "/user_consultation", element : <Consultation_user_Layout/>,
               children : [
                 { path : "", element : <Consultation_page_user/>},
@@ -196,7 +199,7 @@ const router = createBrowserRouter([
           { path : "processing", element : <Travel_processing/>},
           { path : "complete", element : <Travel_complete_processing/>},
           { path : "rejected", element : <Travel_rejected/>},
-          { path : "staff_panel", element : <Travel_staff_panel/>},
+          { path : "staff_panel", element : <StaffPanel/>},
           { path : "support_ist", element : <Travel_support_list/>},
           { path : "profile", element : <Travel_profile/>},
         ]
@@ -229,7 +232,7 @@ const router = createBrowserRouter([
           { path : "shedule", element : <Consultation_shedule/>},
           { path : "complete", element : <Consultation_Complete/>},
           { path : "rejected", element : <Consultation_Rejected/>},
-          { path : "staff_panel", element : <Consultation_staff_panel/>},
+          { path : "staff_panel", element : <StaffPanel/>},
           { path : "support_list", element : <Consultation_support_list/>},
         ]
       },

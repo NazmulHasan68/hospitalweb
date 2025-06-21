@@ -51,25 +51,29 @@ export const getOneStaff = async (req, res) => {
 // Update staff (and delete old image/CV if replaced)
 export const updateStaff = async (req, res) => {
   try {
-    const staff = await Staff.findById(req.params.id);
+    const { id } = req.params;
+
+    const staff = await Staff.findById(id);
     if (!staff) {
       return res.status(404).json({ message: "Staff not found" });
     }
 
-    // Replace photo
-    if (req.files?.photo) {
-      deleteFile(staff.photo);
-      req.body.photo = req.files.photo[0].filename;
+    // Handle uploaded files
+    if (req.files) {
+      if (req.files.photo && req.files.photo[0]) {
+        deleteFile(`public/photo/${staff.photo}`);
+        req.body.photo = req.files.photo[0].filename;
+      }
+
+      if (req.files.cv && req.files.cv[0]) {
+        deleteFile(`public/cv/${staff.cv}`);
+        req.body.cv = req.files.cv[0].filename;
+      }
     }
 
-    // Replace CV
-    if (req.files?.cv) {
-      deleteFile(staff.cv);
-      req.body.cv = req.files.cv[0].filename;
-    }
-
-    const updatedStaff = await Staff.findByIdAndUpdate(req.params.id, req.body, {
+    const updatedStaff = await Staff.findByIdAndUpdate(id, req.body, {
       new: true,
+      runValidators: true,
     });
 
     res.status(200).json(updatedStaff);
@@ -77,6 +81,10 @@ export const updateStaff = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+
+
 
 // Delete staff (and delete image/CV from disk)
 export const deleteStaff = async (req, res) => {
@@ -116,9 +124,16 @@ export const searchStaff = async (req, res) => {
 // Get staff by department
 export const getByDepartment = async (req, res) => {
   const { department } = req.params;
+
   try {
-    const staffList = await Staff.find({ department });
-    res.status(200).json(staffList);
+    if (department == "admin") {
+        const staffList = await Staff.find();
+        res.status(200).json(staffList);
+    }else{
+        const staffList = await Staff.find({ department });
+        res.status(200).json(staffList);
+    }
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
