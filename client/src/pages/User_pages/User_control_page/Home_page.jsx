@@ -7,11 +7,13 @@ import Home_nevigation_section from '@/components/pages/homepage/Home_nevigation
 import Home_primium_section from '@/components/pages/homepage/Home_primium_section'
 import Home_whyus_section from '@/components/pages/homepage/Home_whyus_section'
 import React from 'react'
+import Fixed_cart from './medicine_user/Fixed_cart'
+import DoctorNotification from './medicine_user/DoctorNotification'
 
 export default function Home_page() {
 
   return (
-    <div className='mt-24 md:mt-24'>
+    <div className='mt-24 md:mt-24 relative'>
       <Home_hero_section/>
       <Home_nevigation_section/>
       <Home_medi_destination/>
@@ -20,6 +22,10 @@ export default function Home_page() {
       <Home_primium_section/>
       <Home_mass_media_section/>
       <Home_about_section/>
+      <div className='flex flex-col gap-2 fixed right-8 md:bottom-6 bottom-12'>
+        <Fixed_cart/>
+        <DoctorNotification/>
+      </div>
     </div>
   )
 }

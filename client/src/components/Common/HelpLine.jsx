@@ -1,5 +1,7 @@
 import React from 'react';
 import { Phone, Mail, Clock, Send } from 'lucide-react';
+import Fixed_cart from '@/pages/User_pages/User_control_page/medicine_user/Fixed_cart';
+import DoctorNotification from '@/pages/User_pages/User_control_page/medicine_user/DoctorNotification';
 
 export default function HelpLine() {
   const handleSubmit = (e) => {
@@ -9,7 +11,7 @@ export default function HelpLine() {
   };
 
   return (
-    <section className="bg-blue-50 py-32 px-4">
+    <section className="bg-blue-50 py-32 px-4 relative">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-xl md:text-3xl font-bold text-blue-800 mb-4">হেল্পলাইন সাপোর্ট</h1>
         <p className="text-sm md:text-lg text-gray-700 mb-8">
@@ -98,6 +100,11 @@ export default function HelpLine() {
             </div>
           </form>
         </div>
+      </div>
+
+      <div className='flex flex-col gap-2 fixed right-8 md:bottom-6 bottom-12'>
+          <Fixed_cart/>
+          <DoctorNotification/>
       </div>
     </section>
   );

@@ -89,6 +89,7 @@ import User_doctor from "./pages/User_Dashboard/UserDashoardController/User_doct
 import User_order from "./pages/User_Dashboard/UserDashoardController/User_order";
 import User_peronal from "./pages/User_Dashboard/UserDashoardController/User_peronal";
 import StaffDetails from "./pages/Medicine_manager/medicine_control_page/StaffDetails";
+import Complete_order from "./pages/User_Dashboard/UserDashoardController/Complete_order";
 
 
 
@@ -153,7 +154,8 @@ const router = createBrowserRouter([
           { path : "medicine", element : <User_medicine/> },
           { path : "travel", element : <User_travel/> },
           { path : "doctor", element : <User_doctor/> },
-          { path : "order_comfirm", element : <User_order/> },
+          { path : "order", element : <User_order/> },
+          { path : "complete", element : <Complete_order/> },
           { path : "personal", element : <User_peronal/> },
         ]
       },

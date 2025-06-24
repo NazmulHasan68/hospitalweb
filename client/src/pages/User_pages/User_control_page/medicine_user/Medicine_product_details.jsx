@@ -2,6 +2,8 @@ import { useGetMedicineByIdQuery } from '@/redux/ApiController/medicineApi';
 import { MoveLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import Fixed_cart from './Fixed_cart';
+import DoctorNotification from './DoctorNotification';
 
 export default function Medicine_product_details() {
     const location = useLocation();
@@ -30,7 +32,7 @@ export default function Medicine_product_details() {
   if (isError || !medi) return <div className="text-center py-20 text-red-500">No product data found.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gray-100 p-4 relative">
       <Link to="/user_medicine" className="flex items-center gap-2 text-blue-800 font-semibold mb-4">
         <MoveLeft /> Back to Product Page
       </Link>
@@ -117,6 +119,10 @@ export default function Medicine_product_details() {
             <p>{medi.warning || 'No warnings provided.'}</p>
           </div>
         </div>
+      </div>
+      <div className='flex flex-col gap-2 fixed right-8 md:bottom-6 bottom-12'>
+          <Fixed_cart/>
+          <DoctorNotification/>
       </div>
     </div>
   );

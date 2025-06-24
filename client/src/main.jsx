@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { Provider } from "react-redux";
-import { appStore } from './redux/store';
+import { appStore, persistor } from './redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 import { useLoadUserQuery } from './redux/ApiController/authApi';
 import { ThreeDots } from 'react-loader-spinner';
 
@@ -29,8 +30,13 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={appStore}>
       <Custom>
-        <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
       </Custom>
     </Provider>
   </StrictMode>,
 )
+
+
+

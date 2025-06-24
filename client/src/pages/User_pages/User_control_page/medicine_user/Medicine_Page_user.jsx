@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "@/redux/features/cartSlice";
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSearchByCategoryOrQueryQuery } from '@/redux/ApiController/medicineApi';
 import MedicineSearchBar from './Medicine_search_bar';
+import Fixed_cart from './Fixed_cart';
+import DoctorNotification from './DoctorNotification';
 
 export default function Medicine_Page_user() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
   const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
+  // Get cart items from redux store
+  const cartItems = useSelector((state) => state.cart.cartItems);
 
   const query = searchParams.get('query') || '';
   const categoryParam = searchParams.get('categories');
@@ -34,8 +42,18 @@ export default function Medicine_Page_user() {
     return <div className="flex justify-center items-center min-h-screen text-lg text-red-500">Failed to load medicines.</div>;
   }
 
+  const handleAddToCart = (medi) => {
+    dispatch(addToCart({ 
+      _id: medi._id,
+      name: medi.name,
+      price: medi.price,
+      image: medi.images?.[0] || null,
+      quantity: 1,
+    }));
+  };
+
   return (
-    <div className="min-h-screen p-2">
+    <div className="min-h-screen p-2 relative">
       <div className='md:hidden flex justify-between items-center py-4 -mt-8'>
         <p className='text-blue-950 font-medium'>Find your Medicine</p>
         <MedicineSearchBar />
@@ -64,10 +82,8 @@ export default function Medicine_Page_user() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {currentItems.map((medi) => (
-          <Link
-            to={`product_details/${medi._id}`}
+          <div
             key={medi._id}
-            state={{ data: medi }}
             className="group bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 relative overflow-hidden"
           >
             <div className="md:h-36 h-32 overflow-hidden rounded-t-xl relative">
@@ -95,11 +111,28 @@ export default function Medicine_Page_user() {
                   <span className="text-blue-700 font-semibold text-sm md:text-md">৳{medi.price}</span>
                 </div>
               </div>
-              <button className="w-full mt-3 py-1 md:py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 text-sm">
-                Add to Cart
-              </button>
+              <div className='bg-green-500 hover:bg-green-600 py-1 mt-2 text-white cursor-pointer text-center rounded-lg'>
+                <Link to={`product_details/${medi._id}`} className='px-14'>View</Link>
+              </div>
+
+              {/* Conditional Add / Remove Cart Button */}
+              {cartItems.some(item => item._id === medi._id) ? (
+                <button
+                  onClick={() => dispatch(removeFromCart(medi._id))}
+                  className="w-full mt-1 py-1 md:py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 text-sm"
+                >
+                  Remove from Cart
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleAddToCart(medi)}
+                  className="w-full mt-1 py-1 md:py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 text-sm"
+                >
+                  Add to Cart
+                </button>
+              )}
             </div>
-          </Link>
+          </div>
         ))}
       </div>
 
@@ -113,7 +146,7 @@ export default function Medicine_Page_user() {
             Prev
           </button>
 
-          {[...Array(totalPages)]?.map((_, i) => (
+          {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
@@ -134,6 +167,11 @@ export default function Medicine_Page_user() {
           </button>
         </div>
       )}
+
+       <div className='flex flex-col gap-2 fixed right-8 md:bottom-6 bottom-12'>
+          <Fixed_cart/>
+          <DoctorNotification/>
+       </div>
     </div>
   );
 }

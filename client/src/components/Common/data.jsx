@@ -13,4 +13,5 @@ export const categories = [
   "Herbal Medicine",
   "Prescription Medicine",
   "OTC Medicine",
+  "forien Medicine"
 ];

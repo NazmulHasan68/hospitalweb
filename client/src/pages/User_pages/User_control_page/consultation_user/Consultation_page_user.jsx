@@ -9,6 +9,7 @@ export default function Consultation_page_user() {
       <Consultation_Hero_search/>
       <Consultation_speclist_section/>
       <Consultation_Department_Symptom/>
+      
     </div>
   )
 }
