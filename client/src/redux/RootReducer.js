@@ -7,6 +7,7 @@ import cartReducer from "../redux/features/cartSlice";
 import { authApi } from "./ApiController/authApi";
 import { medicineApi } from "./ApiController/medicineApi";
 import { staffApi } from "./ApiController/staffApi";
+import { mediorderApi } from "./ApiController/medicineOrderApi";
 
 // Persist config for cart only
 const cartPersistConfig = {
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [medicineApi.reducerPath]: medicineApi.reducer,
   [staffApi.reducerPath]: staffApi.reducer,
+  [mediorderApi.reducerPath]: mediorderApi.reducer,
   auth: authReducer,
   cart: persistReducer(cartPersistConfig, cartReducer),
 });

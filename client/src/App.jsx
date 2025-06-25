@@ -90,6 +90,9 @@ import User_order from "./pages/User_Dashboard/UserDashoardController/User_order
 import User_peronal from "./pages/User_Dashboard/UserDashoardController/User_peronal";
 import StaffDetails from "./pages/Medicine_manager/medicine_control_page/StaffDetails";
 import Complete_order from "./pages/User_Dashboard/UserDashoardController/Complete_order";
+import Medicine_payment_success from "./components/Common/staff/payentFolder/Medicine_payment_success";
+import Medicine_payment_failed from "./components/Common/staff/payentFolder/Medicine_payment_failed";
+import Medicine_payment_cancel from "./components/Common/staff/payentFolder/Medicine_payment_cancel";
 
 
 
@@ -159,6 +162,23 @@ const router = createBrowserRouter([
           { path : "personal", element : <User_peronal/> },
         ]
       },
+
+      //================================== medicine payemnt status ==================================
+      { path : `/medicine/payment-success/:userId`, element : <Medicine_payment_success/>},
+      { path : `/medicine/payment-failed/:userId`, element : <Medicine_payment_failed/>},
+      { path : `/medicine/payment-cancel/:userId`, element : <Medicine_payment_cancel/>},
+
+      //================================== travel payemnt status ==================================
+      { path : `/travel/payment-success/:userId`, element : <Doctor_deashboard/>},
+      { path : `/travel/payment-failed/:userId`, element : <Doctor_deashboard/>},
+      { path : `/travel/payment-cancel/:userId`, element : <Doctor_deashboard/>},
+
+      //================================== doctor payemnt status ==================================
+      { path : `/doctor/payment-success/:userId`, element : <Doctor_deashboard/>},
+      { path : `/doctor/payment-failed/:userId`, element : <Doctor_deashboard/>},
+      { path : `/doctor/payment-cancel/:userId`, element : <Doctor_deashboard/>},
+
+
       {// ============================================ =========== this section is only for doctor 
         path : "doctor" , element : <DoctorLayout/>,
         children : [

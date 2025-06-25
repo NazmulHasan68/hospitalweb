@@ -40,7 +40,6 @@ router.post('/create', isAuthenticateFormedicine, upload.array('images', 5), cre
 router.put('/update/:id', isAuthenticateFormedicine, upload.array("images", 5), updateMedicine);
 router.delete('/delete/:id', isAuthenticateFormedicine, deleteMedicine);
 
-// Public routes
 router.get('/all', getAllMedicines);
 router.get('/search', searchMedicines);
 router.get('/:id', getMedicineById);

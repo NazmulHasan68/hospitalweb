@@ -1,98 +1,259 @@
-import Order from '../models/Order.js';
-import Medicine from '../models/Medicine.js';
 
-// @desc Create a new order
-export const createOrder = async (req, res) => {
+import mongoose from 'mongoose';
+import User from '../../models/user.model.js'
+import Order from '../../models/medicine/order_schema.js';
+import Medicine from '../../models/medicine/medicine_schema.js';
+import SSLCommerzPayment from "sslcommerz-lts";
+import { v4 as uuidv4 } from "uuid";
+
+
+
+// ==========================================
+// 1️⃣ Create Order (SSLCommerz Payment)
+// ==========================================
+export const createMedicineOrder = async (req, res) => {
+  const store_id = process.env.STORE_ID;
+  const store_passwd = process.env.STORE_PASSWORD;
+  const is_live = false;
+
   try {
-    const { user, medicines, shippingAddress } = req.body;
+    const { medicines, totalAmount, shippingAddress } = req.body;
+    const userId = req.id;
+    const user = await User.findById(userId);
+    const transactionId = uuidv4();
 
-    // Calculate total amount from medicine prices and quantities
-    let totalAmount = 0;
-    for (const item of medicines) {
-      const medicine = await Medicine.findById(item.medicine);
-      if (!medicine) throw new Error(`Medicine not found: ${item.medicine}`);
-      totalAmount += medicine.price * item.quantity;
+    const payload = {
+      total_amount: totalAmount,
+      currency: 'BDT',
+      tran_id: transactionId,
+      success_url: `${process.env.BASE_URL}/api/mediorders/payment/success/${transactionId}`,
+      fail_url: `${process.env.BASE_URL}/api/mediorders/payment/fail/${transactionId}`,
+      cancel_url: `${process.env.BASE_URL}/api/mediorders/payment/cancel/${transactionId}`,
+      ipn_url: `${process.env.BASE_URL}/api/mediorders/payment/ipn/${transactionId}`,
+      shipping_method: 'Courier',
+      product_name: 'Medicine Order',
+      product_category: 'Pharmacy',
+      product_profile: 'general',
+      cus_name: req.user?.name || 'Customer',
+      cus_email: req.user?.email || 'test@test.com',
+      cus_add1: shippingAddress || 'Dhaka, Bangladesh 2',
+      cus_phone: req.user?.phone || '0180********',
+      ship_name: 'Medicine Delivery',
+      ship_city: 'Dhaka', 
+      ship_postcode: '1207',
+      ship_add1: shippingAddress || 'Dhaka, Bangladesh 2',
+      ship_country: 'Bangladesh',
+    };
+
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+    const apiResponse = await sslcz.init(payload);
+
+    if (!apiResponse?.GatewayPageURL) {
+      return res.status(500).json({
+        message: "Payment gateway error",
+        details: apiResponse,
+      });
     }
 
-    const newOrder = new Order({
-      user,
-      medicines,
-      shippingAddress,
+    const orderData = {
+      user: userId,
+      medicines: typeof medicines === 'string' ? JSON.parse(medicines) : medicines,
       totalAmount,
+      shippingAddress,
+      paymentMethod: 'online',
+      paymentStatus: 'pending',
+      deliveryStatus: 'processing',
+      prescription: req.files?.map((file) => file.filename) || [],
+      transactionId,
+    };
+
+    const order = await Order.create(orderData);
+    return res.json({ success: true, redirectUrl: apiResponse.GatewayPageURL });
+
+  } catch (error) {
+    console.error('🔴 SSLCommerz order error:', error);
+    return res.status(500).json({ message: 'Failed to initiate payment' });
+  }
+};
+
+
+
+
+
+
+// ==========================================
+// 2️⃣ Create Order (Manual / COD / Offline)
+// ==========================================
+export const createOrder = async (req, res) => {
+  try {
+    const { userId, medicines, totalAmount, shippingAddress, paymentMethod } = req.body;
+
+    if (!userId || !medicines || !shippingAddress || !paymentMethod) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const parsedMedicines = typeof medicines === 'string' ? JSON.parse(medicines) : medicines;
+    const prescription = req.files?.map((file) => file.filename) || [];
+
+    const newOrder = new Order({
+      user: userId,
+      medicines: parsedMedicines,
+      totalAmount,
+      shippingAddress,
+      paymentMethod,
+      paymentStatus: paymentMethod === 'cash' ? 'pending' : 'paid',
+      deliveryStatus: 'processing',
+      prescription,
     });
 
-    const savedOrder = await newOrder.save();
-    res.status(201).json(savedOrder);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    await newOrder.save();
+
+    // ✅ Don't redirect from backend
+    res.status(201).json({
+      message: 'Order created successfully',
+      redirectUrl: `${process.env.FRONTENDURL}/medicine/payment-success/${userId}`,
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating order:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// @desc Get all orders (admin use)
-export const getAllOrders = async (req, res) => {
+
+
+// ==========================================
+// 3️⃣ SSLCommerz Payment Handlers
+// ==========================================
+export const paymentSuccess = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate('user', 'name email')
-      .populate('medicines.medicine', 'name price');
+    const { transactionId } = req.params;
+    await Order.findOneAndUpdate({ transactionId }, { paymentStatus: 'paid' });
+    res.redirect(`${process.env.FRONTENDURL}/medicine/payment-success/${transactionId}`);
+  } catch (err) {
+    console.error('Payment success error:', err);
+    res.status(500).send('Error processing success.');
+  }
+};
+
+export const paymentFail = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    await Order.findOneAndUpdate({ transactionId }, { paymentStatus: 'failed' });
+    res.redirect(`${process.env.FRONTENDURL}/medicine/payment-failed/${transactionId}`);
+  } catch (err) {
+    console.error('Payment fail error:', err);
+    res.status(500).send('Error processing failure.');
+  }
+};
+
+export const paymentCancel = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    await Order.findOneAndUpdate({ transactionId }, { paymentStatus: 'cancelled' });
+    res.redirect(`${process.env.FRONTENDURL}/medicine/payment-cancel/${transactionId}`);
+  } catch (err) {
+    console.error('Payment cancel error:', err);
+    res.status(500).send('Error processing cancel.');
+  }
+};
+
+
+
+
+
+
+
+
+
+// ==========================================
+// 4️⃣ Get Single Medicine by ID
+// ==========================================
+export const getMedicineById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const orders = await Order.find({ user: id }).populate('medicines.medicine').sort({ createdAt: -1 });
+    if (!orders) {
+      return res.status(404).json({ message: 'Order not found!' });
+    }
+
     res.status(200).json(orders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+  } catch (error) {
+    console.error('Error getting order:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// @desc Get order by ID
-export const getOrderById = async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+// 5️⃣ Get All Medicines
+// ==========================================
+export const getAllMedicines = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate('user', 'name email')
-      .populate('medicines.medicine', 'name price');
-    if (!order) return res.status(404).json({ message: 'Order not found' });
-    res.status(200).json(order);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const medicines = await Medicine.find();
+    res.status(200).json(medicines);
+  } catch (error) {
+    console.error('Error fetching medicines:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// @desc Get orders by user ID
-export const getOrdersByUser = async (req, res) => {
-  try {
-    const orders = await Order.find({ user: req.params.userId })
-      .populate('medicines.medicine', 'name price');
-    res.status(200).json(orders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 
-// @desc Update order status (payment/delivery)
+
+
+
+
+// ==========================================
+// 6️⃣ Update Order Status (payment + delivery)
+// ==========================================
 export const updateOrderStatus = async (req, res) => {
   try {
+    const { orderId } = req.params;
     const { paymentStatus, deliveryStatus } = req.body;
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...(paymentStatus && { paymentStatus }),
-        ...(deliveryStatus && { deliveryStatus })
-      },
-      { new: true, runValidators: true }
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { paymentStatus, deliveryStatus },
+      { new: true }
     );
 
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
 
-    res.status(200).json(order);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(200).json({ message: 'Order status updated', order: updatedOrder });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// @desc Delete order by ID
+
+
+
+
+
+// ==========================================
+// 7️⃣ Delete Order
+// ==========================================
 export const deleteOrder = async (req, res) => {
   try {
-    const deleted = await Order.findByIdAndDelete(req.params.id);
+    const { orderId } = req.params;
+    const deleted = await Order.findByIdAndDelete(orderId);
+
     if (!deleted) return res.status(404).json({ message: 'Order not found' });
-    res.status(200).json({ message: 'Order deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    res.status(200).json({ message: '🗑️ Order deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

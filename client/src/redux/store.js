@@ -13,6 +13,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+import { mediorderApi } from './ApiController/medicineOrderApi';
 
 export const appStore = configureStore({
   reducer: rootReducer,
@@ -24,7 +25,8 @@ export const appStore = configureStore({
     }).concat(
       authApi.middleware,
       medicineApi.middleware,
-      staffApi.middleware
+      staffApi.middleware,
+      mediorderApi.middleware,
     ),
 });
 

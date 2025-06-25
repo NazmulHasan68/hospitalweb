@@ -11,6 +11,7 @@ const generateOrders = () =>
   }));
 
 const orders = generateOrders();
+
 const ITEMS_PER_PAGE = 10;
 
 export default function CheckOrders() {

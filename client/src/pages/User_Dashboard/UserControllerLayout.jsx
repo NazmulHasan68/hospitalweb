@@ -10,7 +10,7 @@ export default function UserControllerLayout() {
                 <div className='hidden md:block'>
                    <UserSidebar/>
                 </div>
-                <div className='md:hidden block'>
+                <div className='md:hidden flex mt-4'>
                   <Mobile_user_sidebar/>
                 </div>
             </div>
