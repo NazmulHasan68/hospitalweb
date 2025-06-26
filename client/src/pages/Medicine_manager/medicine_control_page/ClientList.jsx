@@ -1,29 +1,63 @@
-import React, { useState } from 'react';
-
-const sampleClients = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  name: `Client ${i + 1}`,
-  phone: `+8801${Math.floor(600000000 + Math.random() * 10000000)}`,
-  address: `House #${i + 10}, Road #${i + 2}, City ${i % 5 + 1}`,
-  image: 'https://ui-avatars.com/api/?name=Client+' + (i + 1),
-}));
+import { useGetAllOrdersQuery } from '@/redux/ApiController/medicineOrderApi';
+import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 50;
 
 export default function ClientList() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(sampleClients.length / ITEMS_PER_PAGE);
+  const { data = [], isLoading, isError } = useGetAllOrdersQuery();
 
-  const currentClients = sampleClients.slice(
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Extract unique users
+  const uniqueClients = useMemo(() => {
+    const seen = new Set();
+    return data
+      .map((order) => order.user)
+      .filter((user) => {
+        if (!seen.has(user._id)) {
+          seen.add(user._id);
+          return true;
+        }
+        return false;
+      });
+  }, [data]);
+
+  // Filter by search term
+  const filteredClients = useMemo(() => {
+    return uniqueClients.filter((client) => {
+      const lowerSearch = searchTerm.toLowerCase();
+      return (
+        client.name?.toLowerCase().includes(lowerSearch) ||
+        client.phone?.toLowerCase().includes(lowerSearch)
+      );
+    });
+  }, [searchTerm, uniqueClients]);
+
+  const totalPages = Math.ceil(filteredClients.length / ITEMS_PER_PAGE);
+
+  const currentClients = filteredClients.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
   return (
     <div className="p-4">
-      <div className='flex justify-between items-center'>
-        <h2 className="text-xl font-bold text-blue-600 mb-4">👥 Client List (100) </h2>
-        <input type='search' placeholder=' Search by name and number'/>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-blue-600">
+          👥 Client List ({filteredClients.length})
+        </h2>
+        <input
+          type="search"
+          placeholder="Search by name or phone"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset to page 1 on search
+          }}
+          className="px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       {/* Client Table */}
@@ -40,19 +74,24 @@ export default function ClientList() {
           </thead>
           <tbody>
             {currentClients.map((client) => (
-              <tr key={client.id} className="border-b hover:bg-gray-50">
+              <tr key={client._id} className="border-b hover:bg-gray-50">
                 <td className="p-3">
                   <img
-                    src={client.image}
+                    src={client.photoUrl}
                     alt={client.name}
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                 </td>
                 <td className="p-3">{client.name}</td>
                 <td className="p-3">{client.phone}</td>
-                <td className="p-3">{client.address}</td>
+                <td className="p-3">{client.address || 'N/A'}</td>
                 <td className="p-3 text-center">
-                  <button className="text-blue-600 hover:underline">View</button>
+                  <Link
+                    to={`${client._id}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    View
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -61,21 +100,23 @@ export default function ClientList() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 space-x-2">
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded border ${
-              currentPage === index + 1
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-blue-600'
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`px-3 py-1 rounded border ${
+                currentPage === index + 1
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-blue-600'
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

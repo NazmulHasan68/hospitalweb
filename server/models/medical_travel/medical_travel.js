@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
 
 const travelHelpSchema = new mongoose.Schema({
-  // Reference to the user who submitted the request
+
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
     required: true
   },
 
-  // Patient information
   patientName: { 
     type: String, 
     required: true 
@@ -27,7 +26,7 @@ const travelHelpSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-
+  
   // Preferences for treatment location
   preferredCountry: { 
     type: String, 
@@ -40,12 +39,12 @@ const travelHelpSchema = new mongoose.Schema({
     type: String
   },
 
-  // Uploaded medical or travel documents (e.g., prescriptions, passport scans)
+
   documents: [{
-    type: String // This should store file URLs or Cloudinary paths
+    type: String 
   }],
 
-  // Status tracking for the admin/consultation team
+
   status: {
     type: String,
     enum: ['pending', 'in-review', 'approved', 'rejected'],

@@ -13,33 +13,39 @@ export default function OrderCart() {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  const deliveredOrders = orders.filter((order) => order.deliveryStatus === 'delivered');
+
   if (isLoading) return <div className="p-4 text-center">⏳ Loading your orders...</div>;
   if (!orders.length) return <div className="p-4 text-center">🚫 No orders found.</div>;
+  if (!deliveredOrders.length) return <div className="p-4 text-center">📦 No delivered orders yet.</div>;
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-blue-800 text-center">📦 Your Orders</h2>
+      <h2 className="text-2xl font-bold mb-6 text-green-700 text-center">✅ Delivered Orders</h2>
 
-      <div className="grid md:grid-cols-3 gap-4 h-[480px] overflow-auto">
-        {orders.map((order) => {
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 h-[480px] overflow-auto">
+        {deliveredOrders.map((order) => {
           const date = new Date(order.createdAt);
           const formattedDate = date.toLocaleDateString();
           const formattedTime = date.toLocaleTimeString();
 
           return (
-            <div key={order._id} className="bg-white border shadow-sm p-4 rounded-xl space-y-2">
+            <div key={order._id} className="bg-white border shadow p-4 h-[200px] rounded-xl space-y-2 hover:shadow-lg transition">
               <div className="flex justify-between items-center">
-                <div className="text-gray-700 font-semibold">🆔 {order._id}</div>
-                <div className="text-xs text-gray-500">{formattedDate} | {formattedTime}</div>
+                <div className="text-gray-700 font-semibold truncate">🆔 {order._id}</div>
               </div>
+
               <div className="text-sm">
+                <div className="text-xs text-gray-500">{formattedDate} | {formattedTime}</div>
                 <span className="font-medium text-gray-600">Status:</span>{" "}
-                <span className="capitalize text-blue-700 font-semibold">{order.deliveryStatus}</span>
+                <span className="capitalize text-green-700 font-semibold">{order.deliveryStatus}</span>
               </div>
+
               <div className="text-sm">
                 <span className="font-medium text-gray-600">Total:</span>{" "}
                 <span className="text-green-700 font-bold">৳{order.totalAmount}</span>
               </div>
+
               <div className="text-sm">
                 <span className="font-medium text-gray-600">Payment:</span>{" "}
                 <span className="text-gray-800">{order.paymentMethod}</span>
@@ -49,7 +55,7 @@ export default function OrderCart() {
                 <DialogTrigger asChild>
                   <button
                     onClick={() => setSelectedOrder(order)}
-                    className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-1.5 text-sm font-medium"
+                    className="mt-2 w-full bg-green-600 hover:bg-green-700 text-white rounded-lg py-1.5 text-sm font-medium"
                   >
                     🔍 View Details
                   </button>

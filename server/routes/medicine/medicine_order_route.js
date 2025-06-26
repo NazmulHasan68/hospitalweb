@@ -6,7 +6,7 @@ import {
   createOrder,
   createMedicineOrder,
   getMedicineById,
-  getAllMedicines,
+  getAllorders,
   updateOrderStatus,
   deleteOrder,
   paymentSuccess,
@@ -45,8 +45,9 @@ router.post('/payment/success/:transactionId', paymentSuccess);
 router.post('/payment/fail/:transactionId', paymentFail);
 router.post('/payment/cancel/:transactionId', paymentCancel);
 
-router.get('/medicines', getAllMedicines);
+router.get('/medicines/orders', getAllorders);
 router.get('/medicine/:id', getMedicineById);
+// router.get('')
 router.put('/:orderId/status', updateOrderStatus);
 router.delete('/:orderId', deleteOrder);
 

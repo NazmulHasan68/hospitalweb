@@ -93,6 +93,9 @@ import Complete_order from "./pages/User_Dashboard/UserDashoardController/Comple
 import Medicine_payment_success from "./components/Common/staff/payentFolder/Medicine_payment_success";
 import Medicine_payment_failed from "./components/Common/staff/payentFolder/Medicine_payment_failed";
 import Medicine_payment_cancel from "./components/Common/staff/payentFolder/Medicine_payment_cancel";
+import ViewPrescription from "./pages/Medicine_manager/medicine_control_page/ViewPrescription";
+import CheckClientDetails from "./pages/Medicine_manager/medicine_control_page/CheckClientDetails";
+import Travel_hospital_view from "./pages/Travel_manager/Travel_control_page/Travel_hospital_view";
 
 
 
@@ -216,6 +219,7 @@ const router = createBrowserRouter([
         children : [
           { path : "dashboard", element : <Travel_Dashboard/>},
           { path : "hospital", element : <Travel_hospital_list/>},
+          { path : "hospital/:id", element : <Travel_hospital_view/>},
           { path : "patient", element : <Travel_Patient_list/>},
           { path : "new_appointment", element : <Travel_new_appointment/>},
           { path : "processing", element : <Travel_processing/>},
@@ -233,17 +237,19 @@ const router = createBrowserRouter([
             { path: 'dashboard', element: <Medicine_Dashboard /> },
             { path: 'products', element: <ProductList /> },
             { path: 'clients', element: <ClientList /> },
+            { path: 'clients/:clientId' , element : <CheckClientDetails/>},
             { path: 'orders/check', element: <CheckOrders /> },
             { path: 'orders/processing', element: <ProcessingOrders /> },
             { path: 'orders/complete', element: <CompleteOrders /> },
             { path: 'orders/rejected', element: <RejectedOrders /> },
+            { path: 'prescription/:id', element: <ViewPrescription /> },
             { path: 'staff', element: <StaffPanel /> },
             { path: 'support', element: <SupportList /> },
             { path: 'profile', element: <Profile /> },
         ]
       },
 
-      {// ============================================ =========== this section is only for consultation 
+      {// ======================================================= this section is only for consultation 
         path : "consultation" , element : <ConsultationLayout/>,
         children : [
           { path : "dashboard", element : <Consultation_Dashboard/>},

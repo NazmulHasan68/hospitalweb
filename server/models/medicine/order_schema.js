@@ -37,7 +37,7 @@ const OrderSchema = new mongoose.Schema(
     },
     deliveryStatus: {
       type: String,
-      enum: ['processing', 'shipped', 'delivered'],
+      enum: ['processing', 'shipped', 'delivered', 'rejected'],
       default: 'processing',
     },
     prescription: {

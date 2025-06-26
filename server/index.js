@@ -10,6 +10,7 @@ import authanticationRoute from './routes/authentication.route.js'
 import medicineRoute from './routes/medicine/medicine_route.js'
 import mediOrderRoute from './routes/medicine/medicine_order_route.js'
 import saffRoute from './routes/staff_Routes.js'
+import HospitalRoute from './routes/travel/hospital_travel_route.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ app.use('/api/auth', authanticationRoute);
 app.use('/api/medicine', medicineRoute);
 app.use('/api/mediorders', mediOrderRoute);
 app.use('/api/staff', saffRoute)
+app.use('/api/hospital', HospitalRoute)
 
 
 // Routes

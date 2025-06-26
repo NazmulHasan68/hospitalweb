@@ -172,7 +172,9 @@ export const paymentCancel = async (req, res) => {
 export const getMedicineById = async (req, res) => {
   try {
     const { id } = req.params;
-    const orders = await Order.find({ user: id }).populate('medicines.medicine').sort({ createdAt: -1 });
+    console.log(id);
+    
+    const orders = await Order.find({ user: id }).populate('user').populate('medicines.medicine').sort({ createdAt: -1 });
     if (!orders) {
       return res.status(404).json({ message: 'Order not found!' });
     }
@@ -189,21 +191,15 @@ export const getMedicineById = async (req, res) => {
 
 
 
-
-
-
-
-
-
 // ==========================================
 // 5️⃣ Get All Medicines
 // ==========================================
-export const getAllMedicines = async (req, res) => {
+export const getAllorders = async (req, res) => {
   try {
-    const medicines = await Medicine.find();
-    res.status(200).json(medicines);
+    const Orders = await Order.find().populate('medicines.medicine').populate('user');
+    res.status(200).json(Orders);
   } catch (error) {
-    console.error('Error fetching medicines:', error);
+    console.error('Error fetching Orders:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
@@ -219,6 +215,8 @@ export const getAllMedicines = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
+    console.log(orderId);
+    
     const { paymentStatus, deliveryStatus } = req.body;
 
     const updatedOrder = await Order.findByIdAndUpdate(
@@ -235,7 +233,6 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 
 
 

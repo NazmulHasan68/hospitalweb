@@ -3,6 +3,8 @@ import rootReducer from './RootReducer';
 import { authApi } from './ApiController/authApi';
 import { medicineApi } from './ApiController/medicineApi';
 import { staffApi } from './ApiController/staffApi';
+import { mediorderApi } from './ApiController/medicineOrderApi';
+import { hospitalApi } from './ApiController/Hospital';
 import {
   persistStore,
   persistReducer,
@@ -13,7 +15,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-import { mediorderApi } from './ApiController/medicineOrderApi';
+
 
 export const appStore = configureStore({
   reducer: rootReducer,
@@ -27,6 +29,7 @@ export const appStore = configureStore({
       medicineApi.middleware,
       staffApi.middleware,
       mediorderApi.middleware,
+      hospitalApi.middleware
     ),
 });
 

@@ -34,7 +34,7 @@ export const mediorderApi = createApi({
 
     // ✅ Get All Medicines (used for selection or admin)
     getAllOrders: builder.query({
-      query: () => "/medicines",
+      query: () => "/medicines/orders",
       providesTags: ["Orders"],
     }),
 
@@ -46,8 +46,8 @@ export const mediorderApi = createApi({
 
     // ✅ Update Order Status
     updateOrderStatus: builder.mutation({
-      query: ({ orderId, ...statusData }) => ({
-        url: `/${orderId}/status`,
+      query: ({ id, ...statusData }) => ({
+        url: `/${id}/status`,
         method: "PUT", // your Express router uses PUT, not PATCH
         body: statusData,
       }),
