@@ -77,8 +77,6 @@ export const getTravelHelpById = async (req, res) => {
 // Update a travel help request (admin)
 export const updateTravelHelp = async (req, res) => {
   try {
-    // Optional: if updating documents, handle files here (not implemented)
-    // You can add logic to delete old files if replaced
 
     const updated = await MedicalTravelHelp.findByIdAndUpdate(
       req.params.id,
