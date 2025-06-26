@@ -187,7 +187,7 @@ export default function NavigationBar() {
           <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
             {/* Navigation Links (Desktop) */}
             <div className="text-xl md:text-sm lg:text-xl flex space-x-2 md:space-x-6 items-center">
-              <Link to="/user_travel" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white text-sm md:text-lg font-medium">Medical Traval</Link>
+              <Link to="/user_travel" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white text-sm md:text-lg font-medium">Traval</Link>
               <Link to="/user_medicine" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white text-sm md:text-lg font-medium">Medicine</Link>
               <Link to="/user_consultation" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white  text-sm md:text-lg font-medium">Doctor</Link>
               <Link to="/helpline" className="hover:bg-blue-700 overflow-hidden py-1 px-3 text-white  text-sm md:text-lg font-medium">Helpline</Link>

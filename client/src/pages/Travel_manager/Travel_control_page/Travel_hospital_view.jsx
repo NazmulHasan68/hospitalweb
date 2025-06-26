@@ -11,13 +11,13 @@ export default function Travel_hospital_view() {
   if (!hospital) return <p className="text-center text-gray-500">No data found.</p>
 
   return (
-    <div className="max-w-5xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-blue-800">{hospital.hospitalName}</h1>
+    <div className="max-w-5xl mx-auto p-4 space-y-4 h-screen overflow-auto">
+      <h1 className="text-2xl font-bold text-blue-800 line-clamp-1">{hospital.hospitalName}</h1>
 
       <img
         src={`${import.meta.env.VITE_BASE_URL}/public/hospitals/${hospital.banner}`}
         alt="Hospital Banner"
-        className="w-full h-64 object-cover rounded-lg shadow"
+        className="w-full md:h-64 h-48 object-cover rounded-lg shadow"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-700">

@@ -96,6 +96,7 @@ import Medicine_payment_cancel from "./components/Common/staff/payentFolder/Medi
 import ViewPrescription from "./pages/Medicine_manager/medicine_control_page/ViewPrescription";
 import CheckClientDetails from "./pages/Medicine_manager/medicine_control_page/CheckClientDetails";
 import Travel_hospital_view from "./pages/Travel_manager/Travel_control_page/Travel_hospital_view";
+import Travel_apply from "./components/pages/TravelHospital/Travel_apply";
 
 
 
@@ -125,7 +126,8 @@ const router = createBrowserRouter([
             { path : "/user_travel", element :<Travel_user_layout/> ,
               children : [
                 { path : "", element : <Travel_page_ueser/>},
-                { path : "hospital", element : <Travel_Hospital/>}
+                { path : "hospital/:id", element : <Travel_Hospital/>},
+                { path : "hospital/apply", element : <Travel_apply/>}
               ]
             },
 

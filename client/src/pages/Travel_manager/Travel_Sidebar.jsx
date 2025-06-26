@@ -37,7 +37,7 @@ export default function Travel_Sidebar() {
   ];
 
   return (
-    <aside className="bg-blue-950 text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
+    <aside className="bg-blue-950 h-screen text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
       {/* Profile Section */}
       <Link
         to="/travel/profile"

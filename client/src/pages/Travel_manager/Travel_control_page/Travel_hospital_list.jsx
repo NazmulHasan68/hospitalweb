@@ -76,37 +76,37 @@ export default function Travel_hospital_list() {
 
       {/* Pagination */}
     <div className="flex justify-center mt-4 space-x-2">
-  <button
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-    className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
-  >
-    Prev
-  </button>
-
-  {[...Array(totalPages)].map((_, i) => {
-    const pageNum = i + 1;
-    return (
       <button
-        key={pageNum}
-        onClick={() => handlePageChange(pageNum)}
-        className={`px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 ${
-          pageNum === currentPage ? 'bg-blue-600 text-white' : ''
-        }`}
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
       >
-        {pageNum}
+        Prev
       </button>
-    );
-  })}
 
-  <button
-    onClick={() => handlePageChange(currentPage + 1)}
-    disabled={currentPage === totalPages}
-    className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
+      {[...Array(totalPages)].map((_, i) => {
+        const pageNum = i + 1;
+        return (
+          <button
+            key={pageNum}
+            onClick={() => handlePageChange(pageNum)}
+            className={`px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 ${
+              pageNum === currentPage ? 'bg-blue-600 text-white' : ''
+            }`}
+          >
+            {pageNum}
+          </button>
+        );
+      })}
+
+      <button
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        Next
+      </button>
+    </div>
     </div>
   );
 }

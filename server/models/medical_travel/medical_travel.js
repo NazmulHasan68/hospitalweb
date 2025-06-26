@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 const travelHelpSchema = new mongoose.Schema({
-
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
@@ -39,11 +38,9 @@ const travelHelpSchema = new mongoose.Schema({
     type: String
   },
 
-
   documents: [{
-    type: String 
+    type: String
   }],
-
 
   status: {
     type: String,
@@ -51,22 +48,18 @@ const travelHelpSchema = new mongoose.Schema({
     default: 'pending'
   },
 
-  // Optional notes added by doctors or admins during consultation
   consultationNotes: {
     type: String
   },
 
-  // Timestamp when the request was submitted
   submittedAt: { 
     type: Date, 
     default: Date.now 
   }
 }, {
-  timestamps: true // Automatically adds createdAt and updatedAt fields
+  timestamps: true
 });
 
-const MedicalTravelHelp = mongoose.model('MedicalTravelHelp', travelHelpSchema);
+const MedicalTravelHelp = mongoose.model('Travelapplication', travelHelpSchema);
 
 export default MedicalTravelHelp;
-
-
