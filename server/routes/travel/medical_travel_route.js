@@ -5,12 +5,13 @@ import {
   getTravelHelpById,
   updateTravelHelp,
   deleteTravelHelp,
-} from "../controllers/travelHelpController.js";
+  getTravelById,
+} from "../../controllers/travel/medical_travel_controller.js";
 
 import multer from "multer";
 import path from "path";
+import isAuthenticated from "../../middlewares/isAuthenticated.js";
 
-// Multer config: store files in 'public/apply' folder
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/apply");
@@ -26,15 +27,11 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.post("/", upload.array("documents", 10), createTravelHelp);
-
-router.get("/", getAllTravelHelps);
-
-
-router.get("/:id", getTravelHelpById);
-
-router.patch("/:id", updateTravelHelp);
-
-router.delete("/:id", deleteTravelHelp);
+router.post("/create", isAuthenticated, upload.array("documents", 10), createTravelHelp);
+router.get("/all", getAllTravelHelps);
+router.get("/travel/:id", getTravelHelpById);
+router.get("/help/:id", getTravelById);
+router.patch("/travel/:id", isAuthenticated, updateTravelHelp);
+router.delete("/travel/:id", isAuthenticated, deleteTravelHelp);
 
 export default router;

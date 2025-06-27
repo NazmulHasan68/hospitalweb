@@ -22,7 +22,7 @@ export default function Mobile_user_sidebar() {
   const menuItems = [
     { label: 'Dashboard', icon: <LayoutDashboard size={20} />, to: '/user_panel/dashboard' },
     { label: 'Medicine', icon: <PackageSearch size={20} />, to: '/user_panel/medicine' },
-    { label: 'Travel Appointment', icon: <Users size={20} />, to: '/user_panel/travel' },
+    { label: 'Travel ', icon: <Users size={20} />, to: '/user_panel/travel' },
     { label: 'Doctor Schedule', icon: <ClipboardList size={20} />, to: '/user_panel/doctor' },
     { label: 'Order Pending', icon: <Loader size={20} />, to: '/user_panel/order' },
     { label: 'Order Complete', icon: <CheckCircle size={20} />, to: '/user_panel/complete' },

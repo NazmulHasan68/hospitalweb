@@ -5,6 +5,7 @@ import { medicineApi } from './ApiController/medicineApi';
 import { staffApi } from './ApiController/staffApi';
 import { mediorderApi } from './ApiController/medicineOrderApi';
 import { hospitalApi } from './ApiController/Hospital';
+import { TravelApi } from './ApiController/TravelApi';
 import {
   persistStore,
   persistReducer,
@@ -15,6 +16,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+
 
 
 export const appStore = configureStore({
@@ -29,7 +31,8 @@ export const appStore = configureStore({
       medicineApi.middleware,
       staffApi.middleware,
       mediorderApi.middleware,
-      hospitalApi.middleware
+      hospitalApi.middleware,
+      TravelApi.middleware
     ),
 });
 

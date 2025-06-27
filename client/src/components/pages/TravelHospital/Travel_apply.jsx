@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
+import { useCreateTravelHelpMutation } from "@/redux/ApiController/TravelApi";
 
 export default function Travel_apply() {
+  const [createTravelHelp] = useCreateTravelHelpMutation();
+
   const [formData, setFormData] = useState({
     patientName: "",
     phone: "",
@@ -18,13 +21,13 @@ export default function Travel_apply() {
     preferredHospital: "",
   });
 
-  const [documentFields, setDocumentFields] = useState([[]]); // each array for one input's files
+  const [documentFields, setDocumentFields] = useState([[]]);
   const [loading, setLoading] = useState(false);
 
-  // cleanup URLs on unmount
+  // Cleanup preview URLs on unmount
   useEffect(() => {
     return () => {
-      documentFields.flat().forEach((file) => file.preview && URL.revokeObjectURL(file.preview));
+      documentFields.flat().forEach((file) => file?.preview && URL.revokeObjectURL(file.preview));
     };
   }, [documentFields]);
 
@@ -64,7 +67,8 @@ export default function Travel_apply() {
         payload.append("documents", file);
       });
 
-      
+      await createTravelHelp(payload).unwrap();
+
       toast.success("✅ আবেদন সফলভাবে সম্পন্ন হয়েছে!");
 
       setFormData({
@@ -77,7 +81,6 @@ export default function Travel_apply() {
         preferredCity: "",
         preferredHospital: "",
       });
-
       setDocumentFields([[]]);
     } catch (err) {
       console.error(err);
@@ -94,7 +97,7 @@ export default function Travel_apply() {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Patient Information Fields */}
+        {/* Patient Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label>রোগীর নাম*</Label>
@@ -126,7 +129,7 @@ export default function Travel_apply() {
           </div>
         </div>
 
-        {/* Medical Condition */}
+        {/* Condition */}
         <div>
           <Label>চিকিৎসার বিবরণ*</Label>
           <Textarea
@@ -138,35 +141,38 @@ export default function Travel_apply() {
           />
         </div>
 
-        {/* File Inputs */}
+        {/* Files */}
         <div className="space-y-4">
-          <Label className=" text-sm">ডকুমেন্ট আপলোড করুন (Passport, NID or Birth, Previous prescription , Others)</Label>
-            <div className=" grid grid-cols-2 md:grid-cols-3 gap-4">
-                {documentFields.map((files, index) => (
-                    <div key={index}>
-                    <Input type="file" multiple onChange={(e) => handleFileChange(e, index)} />
+          <Label className="text-sm">
+            ডকুমেন্ট আপলোড করুন (Passport, NID বা জন্ম নিবন্ধন, প্রেসক্রিপশন)
+          </Label>
 
-                    {files.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
-                        {files.map((file, i) => (
-                            <div key={i} className="text-sm w-40 md:w-60 text-center">
-                                {file.preview ? (
-                                    <img
-                                    src={file.preview}
-                                    alt={file.name}
-                                    className="w-full h-24 object-cover rounded border"
-                                    />
-                                ) : (
-                                    <p className="text-blue-600">📄 {file.name}</p>
-                                )}
-                            <p className="text-xs mt-1 truncate">{file.name}</p>
-                            </div>
-                        ))}
-                        </div>
-                    )}
-                    </div>
-                ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {documentFields.map((files, index) => (
+              <div key={index}>
+                <Input type="file" multiple onChange={(e) => handleFileChange(e, index)} />
+
+                {files.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                    {files.map((file, i) => (
+                      <div key={i} className="text-sm w-40 md:w-60 text-center">
+                        {file.preview ? (
+                          <img
+                            src={file.preview}
+                            alt={file.name}
+                            className="w-full h-24 object-cover rounded border"
+                          />
+                        ) : (
+                          <p className="text-blue-600">📄 {file.name}</p>
+                        )}
+                        <p className="text-xs mt-1 truncate">{file.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
 
           <Button type="button" variant="outline" onClick={handleAddFileInput} className="flex items-center gap-2">
             <PlusCircle className="w-4 h-4" />
@@ -174,6 +180,7 @@ export default function Travel_apply() {
           </Button>
         </div>
 
+        {/* Submit */}
         <Button disabled={loading} type="submit" className="w-full mt-4">
           {loading ? (
             <span className="flex items-center gap-2">

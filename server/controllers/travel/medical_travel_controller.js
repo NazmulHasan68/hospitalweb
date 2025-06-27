@@ -24,9 +24,8 @@ export const createTravelHelp = async (req, res) => {
       preferredCountry,
       preferredCity,
       preferredHospital,
-      userId,
     } = req.body;
-
+    const userId = req.id;
     // Handle files
     let documents = [];
     if (req.files && req.files.length > 0) {
@@ -56,7 +55,7 @@ export const createTravelHelp = async (req, res) => {
 // Get all travel help requests
 export const getAllTravelHelps = async (req, res) => {
   try {
-    const helps = await MedicalTravelHelp.find().populate("userId", "name email");
+    const helps = await MedicalTravelHelp.find().populate("userId", "name email phone");
     res.status(200).json(helps);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -65,14 +64,33 @@ export const getAllTravelHelps = async (req, res) => {
 
 // Get one travel help by ID
 export const getTravelHelpById = async (req, res) => {
+  console.log(req.params.id);
+  
   try {
-    const help = await MedicalTravelHelp.findById(req.params.id).populate("userId", "name email");
+    const help = await MedicalTravelHelp.find({ userId: req.params.id }).populate("userId", "name email phone");
     if (!help) return res.status(404).json({ message: "Request not found" });
     res.status(200).json(help);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+export const getTravelById = async (req, res) => {
+  console.log(req.params.id);
+  
+  try {
+    const help = await MedicalTravelHelp.find( {_id:req.params.id} ).populate("userId", "name email phone");
+    if (!help) return res.status(404).json({ message: "Request not found" });
+    res.status(200).json(help);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 
 // Update a travel help request (admin)
 export const updateTravelHelp = async (req, res) => {

@@ -97,6 +97,8 @@ import ViewPrescription from "./pages/Medicine_manager/medicine_control_page/Vie
 import CheckClientDetails from "./pages/Medicine_manager/medicine_control_page/CheckClientDetails";
 import Travel_hospital_view from "./pages/Travel_manager/Travel_control_page/Travel_hospital_view";
 import Travel_apply from "./components/pages/TravelHospital/Travel_apply";
+import View_order from "./pages/Travel_manager/Travel_control_page/View_order";
+import Travel_User_order from "./pages/Travel_manager/Travel_control_page/Travel_User_order";
 
 
 
@@ -223,10 +225,12 @@ const router = createBrowserRouter([
           { path : "hospital", element : <Travel_hospital_list/>},
           { path : "hospital/:id", element : <Travel_hospital_view/>},
           { path : "patient", element : <Travel_Patient_list/>},
+          { path : "patient/:id" , element : <Travel_User_order/>},
           { path : "new_appointment", element : <Travel_new_appointment/>},
           { path : "processing", element : <Travel_processing/>},
           { path : "complete", element : <Travel_complete_processing/>},
           { path : "rejected", element : <Travel_rejected/>},
+          { path : "view/:id", element : <View_order/>},
           { path : "staff_panel", element : <StaffPanel/>},
           { path : "support_ist", element : <Travel_support_list/>},
           { path : "profile", element : <Travel_profile/>},
