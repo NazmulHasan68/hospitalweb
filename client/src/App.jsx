@@ -11,7 +11,6 @@ import ResetPassword from "./pages/Auth_pages/ResetPassword";
 import AdminLayout from "./pages/Admin_pages/AdminLayout";
 import Admin_Dashboard from "./pages/Admin_pages/admin_control_page/Admin_Dashboard";
 import DoctorLayout from "./pages/Doctor_pages/DoctorLayout";
-import Doctor_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_patient";
 import MedicineLayout from "./pages/Medicine_manager/MedicineLayout";
 import Medicine_Dashboard from "./pages/Medicine_manager/medicine_control_page/Medicine_Dashboard";
 import TravelLayout from "./pages/Travel_manager/TravelLayout";
@@ -30,7 +29,6 @@ import Medicine_product_details from "./pages/User_pages/User_control_page/medic
 import Travel_Hospital from "./pages/User_pages/User_control_page/travel_user/Travel_Hospital";
 import Consultation_doctor_search from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_search";
 import UserControllerLayout from "./pages/User_Dashboard/UserControllerLayout";
-import UserCost from "./pages/User_Dashboard/UserDashoardController/UserCost";
 import HelpLine from "./components/Common/HelpLine";
 import Consultation_doctor_details from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_details";
 import Consultation_doctor_info from "./pages/User_pages/User_control_page/consultation_user/Consultation_doctor_info";
@@ -51,17 +49,14 @@ import Travel_new_appointment from "./pages/Travel_manager/Travel_control_page/T
 import Travel_processing from "./pages/Travel_manager/Travel_control_page/Travel_processing";
 import Travel_complete_processing from "./pages/Travel_manager/Travel_control_page/Travel_complete_processing";
 import Travel_rejected from "./pages/Travel_manager/Travel_control_page/Travel_rejected";
-import Travel_staff_panel from "./pages/Travel_manager/Travel_control_page/Travel_staff_panel";
 import Travel_support_list from "./pages/Travel_manager/Travel_control_page/Travel_support_list";
 import Travel_profile from "./pages/Travel_manager/Travel_control_page/Travel_profile";
-import Consultation_hospital_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_hospital_list";
 import Consultation_doctor_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_doctor_list";
 import Consultation_spespalist from "./pages/Consultaion_manager/consultation_control_page/Consultation_spespalist";
 import Consultation_appointments from "./pages/Consultaion_manager/consultation_control_page/Consultation_appointments";
 import Consultation_shedule from "./pages/Consultaion_manager/consultation_control_page/Consultation_shedule";
 import Consultation_Complete from "./pages/Consultaion_manager/consultation_control_page/Consultation_Complete";
 import Consultation_Rejected from "./pages/Consultaion_manager/consultation_control_page/Consultation_Rejected";
-import Consultation_staff_panel from "./pages/Consultaion_manager/consultation_control_page/Consultation_staff_panel";
 import Consultation_support_list from "./pages/Consultaion_manager/consultation_control_page/Consultation_support_list";
 import Admin_patient_list from "./pages/Admin_pages/admin_control_page/Admin_Patient_list";
 import Admin_doctor_list from "./pages/Admin_pages/admin_control_page/Admin_doctor_list";
@@ -99,6 +94,7 @@ import Travel_hospital_view from "./pages/Travel_manager/Travel_control_page/Tra
 import Travel_apply from "./components/pages/TravelHospital/Travel_apply";
 import View_order from "./pages/Travel_manager/Travel_control_page/View_order";
 import Travel_User_order from "./pages/Travel_manager/Travel_control_page/Travel_User_order";
+import Consultation_view_doctor from "./pages/Consultaion_manager/consultation_control_page/consultation_view_doctor";
 
 
 
@@ -259,8 +255,8 @@ const router = createBrowserRouter([
         path : "consultation" , element : <ConsultationLayout/>,
         children : [
           { path : "dashboard", element : <Consultation_Dashboard/>},
-          { path : "hospital", element : <Consultation_hospital_list/>},
           { path : "doctor", element : <Consultation_doctor_list/>},
+          { path : "doctor/:id", element : <Consultation_view_doctor/>},
           { path : "spespalist", element : <Consultation_spespalist/>},
           { path : "appointments", element : <Consultation_appointments/>},
           { path : "shedule", element : <Consultation_shedule/>},

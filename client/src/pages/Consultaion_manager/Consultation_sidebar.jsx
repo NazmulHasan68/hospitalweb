@@ -22,7 +22,6 @@ export default function Consultation_sidebar() {
     { label: 'Dashboard', icon: <LayoutDashboard size={20} />, to: '/consultation/dashboard' },
 
     { section: 'Management' },
-    { label: 'Hospital List', icon: <PackageSearch size={20} />, to: '/consultation/hospital' },
     { label: 'Doctor List', icon: <Users size={20} />, to: '/consultation/doctor' },
 
     { section: 'Appointments' },

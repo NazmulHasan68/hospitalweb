@@ -16,6 +16,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+import { consultationApi } from './ApiController/consaltaionAPi';
 
 
 
@@ -32,7 +33,8 @@ export const appStore = configureStore({
       staffApi.middleware,
       mediorderApi.middleware,
       hospitalApi.middleware,
-      TravelApi.middleware
+      TravelApi.middleware,
+      consultationApi.middleware,
     ),
 });
 

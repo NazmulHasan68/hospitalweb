@@ -1,27 +1,51 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
 import {
   createDoctor,
-  getAllDoctors,
+  getDoctors,
   getDoctorById,
   updateDoctor,
   deleteDoctor,
-} from '../controllers/doctorController.js';
+  searchDoctors,
+} from '../../controllers/doctore_consultation/doctoer_controller.js';
 
 const router = express.Router();
 
-// Create a new doctor
-router.post('/', createDoctor);
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(process.cwd(), 'public', 'doctor'));
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, ext);
+    cb(null, baseName + '-' + Date.now() + ext);
+  },
+});
 
-// Get all doctors
-router.get('/', getAllDoctors);
+const upload = multer({ storage });
 
-// Get doctor by ID
-router.get('/:id', getDoctorById);
+router.post('/create', upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'cv', maxCount: 1 },
+    { name: 'govtLicense', maxCount: 1 },
+  ]),
+  createDoctor
+);
 
-// Update doctor by ID
-router.put('/:id', updateDoctor);
+router.get('/all', getDoctors);
+router.get('/findbyid/:id', getDoctorById);
 
-// Delete doctor by ID
-router.delete('/:id', deleteDoctor);
+router.put( 'update/:id',  upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'cv', maxCount: 1 },
+    { name: 'govtLicense', maxCount: 1 },
+  ]),
+  updateDoctor
+);
+
+router.delete('/delete/:id', deleteDoctor);
+router.get('/search', searchDoctors);
 
 export default router;
+
