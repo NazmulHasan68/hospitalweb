@@ -31,13 +31,13 @@ export const consultationApi = createApi({
     }),
 
     updateConsultation: builder.mutation({
-      query: ({ id, ...updatedData }) => ({
-        url: `/update/${id}`,
-        method: "PUT",
-        body: updatedData,
+      query: ({ id, updatedData }) => ({
+          url: `/update/${id}`,
+          method: "PUT",
+          body: updatedData, 
+        }),
+        invalidatesTags: (result, error, { id }) => [{ type: "Consultation", id }],
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Consultation", id }],
-    }),
 
     deleteConsultation: builder.mutation({
       query: (id) => ({

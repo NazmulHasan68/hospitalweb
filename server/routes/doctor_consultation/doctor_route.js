@@ -36,7 +36,7 @@ router.post('/create', upload.fields([
 router.get('/all', getDoctors);
 router.get('/findbyid/:id', getDoctorById);
 
-router.put( 'update/:id',  upload.fields([
+router.put( '/update/:id',  upload.fields([
     { name: 'photo', maxCount: 1 },
     { name: 'cv', maxCount: 1 },
     { name: 'govtLicense', maxCount: 1 },
@@ -48,4 +48,6 @@ router.delete('/delete/:id', deleteDoctor);
 router.get('/search', searchDoctors);
 
 export default router;
+
+
 

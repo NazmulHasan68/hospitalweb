@@ -38,7 +38,7 @@ const doctorSchema = new mongoose.Schema(
 
     // Instead of single checkupDate, store array of days like ['sun', 'mon']
     checkupDate: [{ type: String, enum: ['sun','mon','tue','wed','thu','fri','sat'] }],
-    checkupType: { type: String, enum: ['online', 'in-person'] },
+    checkupType: { type: String, enum: ['online', 'in-person', 'both'] },
     checkupStartTime: { type: String }, // "HH:mm" format
     checkupEndTime: { type: String },   // "HH:mm" format
 
