@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 
 export default function Consultation_doctor_Name({data}) {
-  console.log(data);
+
   
   return (
     <div className='max-w-6xl mx-2 md:mx-auto'>
