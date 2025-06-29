@@ -140,7 +140,7 @@ const router = createBrowserRouter([
               children : [
                 { path : "", element : <Consultation_page_user/>},
                 { path : "search", element : <Consultation_doctor_search/>},
-                { path : "doctor", element : <Consultation_doctor_details/>,
+                { path : "doctor/:id", element : <Consultation_doctor_details/>,
                   children : [
                     { path : "info" , element : <Consultation_doctor_info/>},
                     { path : "expriance" , element : <Consultation_doctor_expariance/>},

@@ -205,46 +205,92 @@ export const deleteDoctor = async (req, res) => {
 
 
 
-
-
-// SEARCH doctors by name or specialization
 export const searchDoctors = async (req, res) => {
   try {
-    const { q, isActive, isFree, isAvailableToday } = req.query;
+    let {
+      q,
+      isActive,
+      isFree,
+      isAvailableToday,
+      next2hr,
+      maxPrice,
+      category,
+      sortBy,
+      experience,
+      page = 1,
+      limit = 20,
+    } = req.query;
 
-    // If no search query provided
-    if (!q) {
-      return res.status(400).json({ error: 'Search query required' });
+    // Normalize category string: decode, replace spaces/+ with underscore, lowercase
+    if (category) {
+      category = decodeURIComponent(category)
+        .replace(/\+/g, '_')
+        .replace(/\s+/g, '_')
+        .toLowerCase();
     }
 
-    // Build case-insensitive regex for text search
-    const regex = new RegExp(q, 'i');
-
-    // Build boolean filters dynamically if provided in query params
     const boolFilters = {};
+
     if (isActive !== undefined) boolFilters.isActive = isActive === 'true';
     if (isFree !== undefined) boolFilters.isFree = isFree === 'true';
     if (isAvailableToday !== undefined) boolFilters.isAvailableToday = isAvailableToday === 'true';
 
-    // Compose MongoDB query: boolean filters AND $or with regex for text search
-    const query = {
-      ...boolFilters,
-      $or: [
+    if (maxPrice !== undefined) boolFilters.fees = { $lte: Number(maxPrice) };
+
+    if (experience !== undefined && experience !== 'Any') {
+      if (experience === '1-3 Years') boolFilters.experience = { $gte: 1, $lte: 3 };
+      else if (experience === '3-5 Years') boolFilters.experience = { $gte: 3, $lte: 5 };
+      else if (experience === '5+ Years') boolFilters.experience = { $gte: 5 };
+    }
+
+    if (category) boolFilters.category = category;
+
+    if (next2hr === 'true') {
+      const now = new Date();
+      const next2hrDate = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+      boolFilters.availableTime = { $lte: next2hrDate };
+    }
+
+    // Build query
+    let query = { ...boolFilters };
+    if (q) {
+      const regex = new RegExp(q, 'i');
+      query.$or = [
         { name: regex },
-        { category: regex },
         { phone: regex },
         { hospital: regex },
-      ],
-    };
+      ];
+    }
 
-    // Execute query with a limit
-    const doctors = await Doctor.find(query).limit(20);
+    // Get total count for pagination
+    const totalCount = await Doctor.countDocuments(query);
 
-    // Return results
-    res.json(doctors);
+    // Sort options
+    let sortOptions = {};
+    if (sortBy) {
+      switch (sortBy.toLowerCase()) {
+        case 'fees: low to high':
+          sortOptions.fees = 1;
+          break;
+        case 'fees: high to low':
+          sortOptions.fees = -1;
+          break;
+        case 'experience':
+          sortOptions.experience = -1;
+          break;
+      }
+    }
 
+    const doctors = await Doctor.find(query)
+      .sort(sortOptions)
+      .limit(Number(limit))
+      .skip((Number(page) - 1) * Number(limit));
+
+    res.json({ data: doctors, totalCount });
   } catch (error) {
     console.error('Search doctors error:', error);
     res.status(500).json({ error: 'Server error searching doctors' });
   }
 };
+
+

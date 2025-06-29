@@ -48,9 +48,38 @@ export const consultationApi = createApi({
     }),
 
     searchConsultations: builder.query({
-      query: (searchTerm) => `/search?q=${searchTerm}`,
-      providesTags: ["Consultation"],
-    }),
+    query: ({
+      q,
+      isActive,
+      isFree,
+      isAvailableToday,
+      next2hr,
+      maxPrice,
+      sortBy,
+      experience,
+      category,
+      page,
+      limit,
+    }) => {
+      const params = new URLSearchParams();
+
+      if (q?.trim()) params.set("q", q.trim());
+      if (isActive !== undefined) params.set("isActive", String(isActive));
+      if (isFree !== undefined) params.set("isFree", String(isFree));
+      if (isAvailableToday !== undefined) params.set("isAvailableToday", String(isAvailableToday));
+      if (next2hr !== undefined) params.set("next2hr", String(next2hr));
+      if (maxPrice !== undefined) params.set("maxPrice", String(maxPrice));
+      if (sortBy) params.set("sortBy", sortBy);
+      if (experience) params.set("experience", experience);
+      if (category) params.set("category", category);
+      if (page !== undefined) params.set("page", String(page));
+      if (limit !== undefined) params.set("limit", String(limit));
+
+      return `/search?${params.toString()}`;
+    },
+  }),
+
+
   }),
 });
 
@@ -62,3 +91,6 @@ export const {
   useDeleteConsultationMutation,
   useSearchConsultationsQuery,
 } = consultationApi;
+
+
+

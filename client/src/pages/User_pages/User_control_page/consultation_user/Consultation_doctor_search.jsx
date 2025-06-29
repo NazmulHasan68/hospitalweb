@@ -1,6 +1,7 @@
 import Consultation_search_result from '@/components/pages/ConsultationSearchPage/Consultation_search_result'
 import Consultation_Search_Sidebar from '@/components/pages/ConsultationSearchPage/Consultation_Search_Sidebar'
 import React from 'react'
+import Consultation_mobile_sidebar from './Consultation_mobile_sidebar'
 
 export default function Consultation_doctor_search() {
   return (

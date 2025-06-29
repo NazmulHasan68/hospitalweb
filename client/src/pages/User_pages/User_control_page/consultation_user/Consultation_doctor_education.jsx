@@ -1,6 +1,11 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function Consultation_doctor_education() {
+
+  const location = useLocation();
+  const data = location.state;
+  
   const educationData = [
     {
       degree: 'MBBS',

@@ -15,3 +15,24 @@ export const categories = [
   "OTC Medicine",
   "forien Medicine"
 ];
+
+
+
+export const doctorcategory = [
+  'Sexual problems',
+  'Period problems / Gyne problems',
+  'Fever, Cold / Flu, Allergy',
+  'Child diseases',
+  'Pregnancy issues',
+  'Weight loss / gain, Diet chart',
+  'Itching, Acne & Skin problems',
+  'Hair fall and Dandruff',
+  'Urine infection or problems',
+  'Acidity, Indigestion, Diarrhea, Constipation',
+  'Mental Health / Stress',
+  'Allergy / Immunity Issues',
+  'General check-up',
+  'Eye issues',
+  'Parasite / Infection',
+  'Energy / Weakness',
+];
