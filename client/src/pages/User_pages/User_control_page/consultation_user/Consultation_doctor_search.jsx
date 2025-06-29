@@ -1,4 +1,4 @@
-import ConsultationSearchResult from '@/components/pages/ConsultationSearchPage/consultation_search_result'
+import Consultation_search_result from '@/components/pages/ConsultationSearchPage/Consultation_search_result'
 import Consultation_Search_Sidebar from '@/components/pages/ConsultationSearchPage/Consultation_Search_Sidebar'
 import React from 'react'
 
@@ -9,7 +9,7 @@ export default function Consultation_doctor_search() {
         <Consultation_Search_Sidebar/>
       </div>
       <div className=' md:basis-3/4'>
-        <ConsultationSearchResult/>
+        <Consultation_search_result/>
       </div>
    </div>
   )

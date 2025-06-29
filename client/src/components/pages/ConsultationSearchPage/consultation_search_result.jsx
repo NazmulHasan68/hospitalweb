@@ -1,5 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Search, SlidersHorizontal } from 'lucide-react';
+import {
+  useGetConsultationsQuery,
+  useSearchConsultationsQuery,
+} from '@/redux/ApiController/consaltaionAPi';
 import {
   Drawer,
   DrawerTrigger,
@@ -7,242 +12,225 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerClose,
-} from "@/components/ui/drawer"; // Update path as needed
-import { Link, useSearchParams } from "react-router-dom";
+} from '@/components/ui/drawer';
+import DoctorFilters from './DoctorFilters';
 
-// Mock doctor data
-const doctors = Array.from({ length: 10 }).map((_, index) => ({
-  id: index + 1,
-  name: `Dr. John Doe ${index + 1}`,
-  fees: 50 + index * 5,
-  experience: 5 + index,
-  specialist: 'Cardiologist',
-  image: 'https://via.placeholder.com/150',
-  online: index % 2 === 0,
-  availableToday: index % 3 === 0,
-  availableNext2Hours: index % 4 === 0,
-  isFree: index % 5 === 0,
-}));
+const ITEMS_PER_PAGE = 9;
 
-const ITEMS_PER_PAGE = 6;
-
-export default function ConsultationSearchResult() {
+export default function Consultation_search_result() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const sort = searchParams.get("sort") || "Relevance";
-  const experience = searchParams.get("experience") || "Any";
-
+  // Read query & filters from URL params
+  const query = searchParams.get('query') || '';
+  const maxPrice = Number(searchParams.get('maxPrice')) || 5000;
+  const sort = searchParams.get('sortBy')?.replace(/_/g, ' ') || 'Relevance';
+  const experience = searchParams.get('experience') || 'Any';
   const checkboxFilters = {
-    online: searchParams.get("online") === "true",
-    today: searchParams.get("today") === "true",
-    next2hr: searchParams.get("next2hr") === "true",
-    free: searchParams.get("free") === "true",
+    isActive: searchParams.get('isActive') === 'true',
+    isAvailableToday: searchParams.get('isAvailableToday') === 'true',
+    next2hr: searchParams.get('next2hr') === 'true',
+    isFree: searchParams.get('isFree') === 'true',
   };
 
-  // Apply filters and sort
+  // Local state for search input and manualSearch flag to prevent unwanted resets
+  const [searchInput, setSearchInput] = useState(query);
+  const [manualSearch, setManualSearch] = useState(false);
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  useEffect(() => setPage(1), [searchParams]); // reset page on filter/search change
+
+  // Sync searchInput with URL param query unless manualSearch (typing)
+  useEffect(() => {
+    if (!manualSearch) setSearchInput(query);
+    setManualSearch(false);
+  }, [query, manualSearch]);
+
+  // Data fetching hooks
+  const {
+    data: searchedDoctors = [],
+    isLoading: isSearching,
+    error: searchError,
+  } = useSearchConsultationsQuery(query.trim(), { skip: !query.trim() });
+
+  const {
+    data: allDoctors = [],
+    isLoading: isLoadingAll,
+    error: loadError,
+  } = useGetConsultationsQuery(undefined, { skip: !!query.trim() });
+
+  const doctors = query.trim() ? searchedDoctors : allDoctors;
+
+  // Filter and sort doctors according to filters from URL
   const filteredDoctors = useMemo(() => {
-    let filtered = [...doctors];
+    let out = [...doctors];
 
-    // Experience Filter
-    if (experience === "1-3 Years") {
-      filtered = filtered.filter(d => d.experience >= 1 && d.experience <= 3);
-    } else if (experience === "3-5 Years") {
-      filtered = filtered.filter(d => d.experience >= 3 && d.experience <= 5);
-    } else if (experience === "5+ Years") {
-      filtered = filtered.filter(d => d.experience > 5);
+    // Filter by search query (redundant but safe)
+    if (query) {
+      const q = query.toLowerCase();
+      out = out.filter(
+        (d) =>
+          (d.name || '').toLowerCase().includes(q) ||
+          (d.diagnosis || '').toLowerCase().includes(q)
+      );
     }
 
-    // Checkbox Filters
-    if (checkboxFilters.online) {
-      filtered = filtered.filter(d => d.online);
-    }
-    if (checkboxFilters.today) {
-      filtered = filtered.filter(d => d.availableToday);
-    }
-    if (checkboxFilters.next2hr) {
-      filtered = filtered.filter(d => d.availableNext2Hours);
-    }
-    if (checkboxFilters.free) {
-      filtered = filtered.filter(d => d.isFree);
-    }
+    // Experience filter
+    if (experience === '1-3 Years')
+      out = out.filter(d => d.experience >= 1 && d.experience <= 3);
+    else if (experience === '3-5 Years')
+      out = out.filter(d => d.experience >= 3 && d.experience <= 5);
+    else if (experience === '5+ Years')
+      out = out.filter(d => d.experience > 5);
+
+    // Price filter
+    out = out.filter(d => (d.fees ?? 0) <= maxPrice);
+
+    // Checkbox filters
+    if (checkboxFilters.isActive) out = out.filter(d => d.isActive);
+    if (checkboxFilters.isAvailableToday) out = out.filter(d => d.isAvailableToday);
+    if (checkboxFilters.next2hr) out = out.filter(d => d.next2hr);
+    if (checkboxFilters.isFree) out = out.filter(d => d.isFree);
 
     // Sorting
     switch (sort) {
-      case "Fees: low to high":
-        filtered.sort((a, b) => a.fees - b.fees);
+      case 'Fees: low to high':
+        out.sort((a, b) => (a.fees || 0) - (b.fees || 0));
         break;
-      case "Fees: high to low":
-        filtered.sort((a, b) => b.fees - a.fees);
+      case 'Fees: high to low':
+        out.sort((a, b) => (b.fees || 0) - (a.fees || 0));
         break;
-      case "Experience":
-        filtered.sort((a, b) => b.experience - a.experience);
+      case 'Experience':
+        out.sort((a, b) => (b.experience || 0) - (a.experience || 0));
         break;
-      case "Specialist First":
-        filtered.sort((a, b) => a.specialist.localeCompare(b.specialist));
+      case 'Specialist First':
+        out.sort((a, b) =>
+          (a.specialist || '').localeCompare(b.specialist || '')
+        );
         break;
       default:
         break;
     }
 
-    return filtered;
-  }, [experience, sort, checkboxFilters]);
+    return out;
+  }, [doctors, query, experience, maxPrice, sort, checkboxFilters]);
 
+  // Pagination slice
   const totalPages = Math.ceil(filteredDoctors.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentDoctors = filteredDoctors.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const start = (page - 1) * ITEMS_PER_PAGE;
+  const currentPageDoctors = filteredDoctors.slice(start, start + ITEMS_PER_PAGE);
 
-  const goToPrevious = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const goToNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  // Handlers for search input change and enter key press
+  const onSearchChange = (e) => setSearchInput(e.target.value);
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      const q = searchInput.trim();
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (q) newParams.set('query', q);
+      else newParams.delete('query');
+
+      setManualSearch(true);
+      setSearchParams(newParams);
+    }
+  };
+
+  // Loading and error states
+  if (isSearching || isLoadingAll)
+    return <p className="p-4 text-center">Loading doctors…</p>;
+
+  if (searchError || loadError)
+    return <p className="p-4 text-center text-red-600">Error loading doctors.</p>;
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Search & Filter Button */}
+    <div className="mx-auto max-w-7xl p-4 space-y-6">
+      {/* Search Bar + Mobile Filter Drawer */}
       <div className="flex justify-between items-center">
-        <div className="w-full max-w-xl relative">
+        <div className="relative w-full max-w-xl">
           <input
-            type="text"
-            placeholder="Search by doctor name or diagnosis"
             className="w-full border rounded px-4 py-2 pl-10 shadow-sm"
+            placeholder="Search by doctor name or diagnosis"
+            value={searchInput}
+            onChange={onSearchChange}
+            onKeyDown={onKeyDown}
+            autoComplete="off"
           />
           <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
         </div>
+
+        {/* Mobile Filter Drawer */}
         <div className="ml-4 md:hidden">
           <Drawer>
-            <DrawerTrigger className="flex items-center gap-1 px-3 py-2 border rounded text-sm shadow-sm">
-              <SlidersHorizontal size={18} />
-              Filter
+            <DrawerTrigger className="flex items-center px-3 py-2 border rounded text-sm">
+              <SlidersHorizontal size={18} /> Filter
             </DrawerTrigger>
             <DrawerContent>
               <DrawerHeader>
                 <DrawerTitle>Filter Doctors</DrawerTitle>
               </DrawerHeader>
-              <DoctorFilters searchParams={searchParams} setSearchParams={setSearchParams} />
+              <DoctorFilters
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
+              />
               <div className="p-4">
-                <DrawerClose className="w-full bg-blue-500 text-white py-2 rounded">Close</DrawerClose>
+                <DrawerClose className="w-full bg-blue-500 text-white py-2 rounded">
+                  Close
+                </DrawerClose>
               </div>
             </DrawerContent>
           </Drawer>
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
-        {currentDoctors.map((doctor) => (
-          <Link to={'/user_consultation/doctor'} key={doctor.id} className="border border-blue-500 rounded-lg p-4 shadow-md flex gap-4 items-center">
-            <img src={doctor.image} alt={doctor.name} className="md:w-20 md:h-20 w-16 h-16 rounded-full object-cover" />
-            <div className="text-left">
-              <p className="text-sm font-semibold line-clamp-1">{doctor.name}</p>
-              <p className="text-gray-600 text-xs">Fees: ${doctor.fees}</p>
-              <p className="text-gray-600 text-xs">Experience: {doctor.experience} Years</p>
-              <p className="text-gray-600 text-xs line-clamp-1">Specialist: {doctor.specialist}</p>
-            </div>
-          </Link>
-        ))}
+      {/* Doctor List */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {currentPageDoctors.length === 0 ? (
+          <p className="col-span-full text-center text-gray-500">No doctors found.</p>
+        ) : (
+          currentPageDoctors.map((doc) => (
+            <Link
+              key={doc._id || doc.id}
+              to="/user_consultation/doctor"
+              state={{ doctor: doc }}
+              className="flex items-center gap-4 border rounded-lg p-4 shadow hover:shadow-lg transition"
+            >
+              <img
+                src={`${import.meta.env.VITE_BASE_URL}/public/doctor/${doc.photo}`}
+                alt={doc.name}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <h3 className="font-semibold line-clamp-1">{doc.name}</h3>
+                <p className="text-xs text-gray-600">Fees: ${doc.fees ?? 'N/A'}</p>
+                <p className="text-xs text-gray-600">Exp: {doc.experience ?? 'N/A'} yrs</p>
+                <p className="text-xs text-gray-600 line-clamp-1">Spec: {doc.specialist || 'N/A'}</p>
+              </div>
+            </Link>
+          ))
+        )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          onClick={goToPrevious}
-          disabled={currentPage === 1}
-          className="px-4 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-sm font-medium">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={goToNext}
-          disabled={currentPage === totalPages}
-          className="px-4 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-4 mt-4">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="text-sm">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-
-
-const DoctorFilters = ({ searchParams, setSearchParams }) => {
-  const handleChange = (key, value) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set(key, value);
-    setSearchParams(newParams);
-  };
-
-  const handleCheckbox = (key, checked) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (checked) {
-      newParams.set(key, "true");
-    } else {
-      newParams.delete(key);
-    }
-    setSearchParams(newParams);
-  };
-
-  return (
-    <div className="p-4 border rounded-lg w-full space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold mb-2">Filter</h2>
-        <div className="space-y-2">
-
-          {/* Sort Dropdown */}
-          <div>
-            <label className="block font-medium">Sort by</label>
-            <select
-              value={searchParams.get("sort") || "Relevance"}
-              onChange={(e) => handleChange("sort", e.target.value)}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option>Relevance</option>
-              <option>Fees: low to high</option>
-              <option>Fees: high to low</option>
-              <option>Experience</option>
-              <option>Specialist First</option>
-            </select>
-          </div>
-
-          {/* Experience Filter */}
-          <div>
-            <label className="block font-medium">Experience</label>
-            <select
-              value={searchParams.get("experience") || "Any"}
-              onChange={(e) => handleChange("experience", e.target.value)}
-              className="w-full border rounded px-2 py-1"
-            >
-              <option>Any</option>
-              <option>1-3 Years</option>
-              <option>3-5 Years</option>
-              <option>5+ Years</option>
-            </select>
-          </div>
-
-          {/* Checkboxes */}
-          <div className="space-y-1 text-sm text-gray-700">
-            {[
-              { label: "Online Now", key: "online" },
-              { label: "Available next 2 hours", key: "next2hr" },
-              { label: "Available Today", key: "today" },
-              { label: "Free Doctors", key: "free" },
-            ].map(({ label, key }) => (
-              <div key={key}>
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={searchParams.get(key) === "true"}
-                  onChange={(e) => handleCheckbox(key, e.target.checked)}
-                />
-                {label}
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-};

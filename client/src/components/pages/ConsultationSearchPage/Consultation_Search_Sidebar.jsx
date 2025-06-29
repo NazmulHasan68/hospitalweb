@@ -1,22 +1,40 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export default function Consultation_Search_Sidebar() {
-  // State for filters
-  const [price, setPrice] = useState(5000);
-  const [sortBy, setSortBy] = useState("Relevance");
-  const [experience, setExperience] = useState("Any");
-  const [filters, setFilters] = useState({
-    onlineNow: false,
-    available2hr: false,
-    availableToday: false,
-    freeDoctors: false,
+  const [searchParams, setSearchParams] = useSearchParams();
+
+
+
+  // Initialize states from URL params or defaults
+  const [price, setPrice] = useState(() => {
+    const p = searchParams.get("maxPrice");
+    return p ? Number(p) : 5000;
   });
 
-  // Update URL query params on filter change
+  const [sortBy, setSortBy] = useState(() => {
+    const s = searchParams.get("sortBy");
+    return s
+      ? s
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase()) // Capitalize words
+      : "Relevance";
+  });
+
+  const [experience, setExperience] = useState(() => searchParams.get("experience") || "Any");
+
+  const [filters, setFilters] = useState(() => ({
+    isActive: searchParams.get("isActive") === "true",       // FIXED typo: was isAcitive
+    next2hr: searchParams.get("next2hr") === "true",
+    isAvailableToday: searchParams.get("isAvailableToday") === "true",
+    isFree: searchParams.get("isFree") === "true",
+  }));
+
+  // Update URL query params when state changes
   useEffect(() => {
     const params = new URLSearchParams();
 
-    if (price) {
+    if (price && price !== 5000) {
       params.set("maxPrice", price);
     }
 
@@ -36,21 +54,20 @@ export default function Consultation_Search_Sidebar() {
       }
     });
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    
-    // Update the browser URL without reloading page
-    window.history.replaceState(null, "", newUrl);
-  }, [price, sortBy, experience, filters]);
+    setSearchParams(params, { replace: true });
+  }, [price, sortBy, experience, filters, setSearchParams]);
 
+  // Toggle checkbox state
   const toggleCheckbox = (name) => {
     setFilters((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
   return (
-    <div className="p-4 hidden md:block border rounded-lg w-full max-w-xs space-y-6">
+    <div className="p-4 hidden md:block h-screen border rounded-lg w-full max-w-xs space-y-6">
       <div>
         <h2 className="text-lg font-semibold mb-2">Filter</h2>
         <div className="space-y-4">
+          {/* Price Range */}
           <div>
             <label htmlFor="price-range" className="block font-medium mb-1">
               Price (up to ${price})
@@ -61,11 +78,12 @@ export default function Consultation_Search_Sidebar() {
               min="0"
               max="5000"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(Number(e.target.value))}
               className="w-full"
             />
           </div>
 
+          {/* Sort by */}
           <div>
             <h2 className="text-lg font-semibold mb-2">Sort by</h2>
             <select
@@ -82,6 +100,7 @@ export default function Consultation_Search_Sidebar() {
             </select>
           </div>
 
+          {/* Experience */}
           <div>
             <label htmlFor="experience" className="block font-medium mb-1">
               Experience
@@ -99,28 +118,26 @@ export default function Consultation_Search_Sidebar() {
             </select>
           </div>
 
+          {/* Checkbox Filters */}
           <div className="space-y-1">
-            {["onlineNow", "available2hr", "availableToday", "freeDoctors"].map(
-              (key) => (
-                <div key={key}>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters[key]}
-                      onChange={() => toggleCheckbox(key)}
-                      className="mr-2"
-                    />
-                    {key === "onlineNow"
-                      ? "Online Now"
-                      : key === "available2hr"
-                      ? "Available next 2 hours"
-                      : key === "availableToday"
-                      ? "Available Today"
-                      : "Free Doctors"}
-                  </label>
-                </div>
-              )
-            )}
+            {[
+              { key: "isActive", label: "Online Now" },     
+              { key: "next2hr", label: "Available next 2 hours" },
+              { key: "isAvailableToday", label: "Available Today" },
+              { key: "isFree", label: "Free Doctors" },
+            ].map(({ key, label }) => (
+              <div key={key}>
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters[key]}
+                    onChange={() => toggleCheckbox(key)}
+                    className="mr-2"
+                  />
+                  {label}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
       </div>

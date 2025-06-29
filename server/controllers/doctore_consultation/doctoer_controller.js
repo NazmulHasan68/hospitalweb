@@ -210,15 +210,39 @@ export const deleteDoctor = async (req, res) => {
 // SEARCH doctors by name or specialization
 export const searchDoctors = async (req, res) => {
   try {
-    const { q } = req.query;
-    if (!q) return res.status(400).json({ error: 'Search query required' });
+    const { q, isActive, isFree, isAvailableToday } = req.query;
 
-    const regex = new RegExp(q, 'i'); // case insensitive
-    const doctors = await Doctor.find({
-      $or: [{ name: regex }, { specialization: regex }],
-    }).limit(20);
+    // If no search query provided
+    if (!q) {
+      return res.status(400).json({ error: 'Search query required' });
+    }
 
+    // Build case-insensitive regex for text search
+    const regex = new RegExp(q, 'i');
+
+    // Build boolean filters dynamically if provided in query params
+    const boolFilters = {};
+    if (isActive !== undefined) boolFilters.isActive = isActive === 'true';
+    if (isFree !== undefined) boolFilters.isFree = isFree === 'true';
+    if (isAvailableToday !== undefined) boolFilters.isAvailableToday = isAvailableToday === 'true';
+
+    // Compose MongoDB query: boolean filters AND $or with regex for text search
+    const query = {
+      ...boolFilters,
+      $or: [
+        { name: regex },
+        { category: regex },
+        { phone: regex },
+        { hospital: regex },
+      ],
+    };
+
+    // Execute query with a limit
+    const doctors = await Doctor.find(query).limit(20);
+
+    // Return results
     res.json(doctors);
+
   } catch (error) {
     console.error('Search doctors error:', error);
     res.status(500).json({ error: 'Server error searching doctors' });
