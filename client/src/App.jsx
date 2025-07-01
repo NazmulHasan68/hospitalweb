@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router";
+import { Navigate, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import MainLayoutpage from "./pages/MainLayoutpages";
 import AuthLayout from "./pages/Auth_pages/AuthLayout";
@@ -95,6 +95,11 @@ import Travel_apply from "./components/pages/TravelHospital/Travel_apply";
 import View_order from "./pages/Travel_manager/Travel_control_page/View_order";
 import Travel_User_order from "./pages/Travel_manager/Travel_control_page/Travel_User_order";
 import Consultation_view_doctor from "./pages/Consultaion_manager/consultation_control_page/consultation_view_doctor";
+import Consultaion_doctor_appoinment from "./components/pages/ConsultationSearchPage/Consultaion_doctor_appoinment";
+import User_doctor_token from "./pages/User_Dashboard/UserDashoardController/User_doctor_token";
+import User_doctor_checkup_complete from "./pages/User_Dashboard/UserDashoardController/User_doctor_checkup_complete";
+import User_doctor_hostory from "./pages/User_Dashboard/UserDashoardController/User_doctor_hostory";
+import Consultation_user_to_doctor from "./pages/Consultaion_manager/consultation_control_page/Consultation_user_to_doctor";
 
 
 
@@ -140,13 +145,15 @@ const router = createBrowserRouter([
               children : [
                 { path : "", element : <Consultation_page_user/>},
                 { path : "search", element : <Consultation_doctor_search/>},
-                { path : "doctor/:id", element : <Consultation_doctor_details/>,
-                  children : [
-                    { path : "info" , element : <Consultation_doctor_info/>},
-                    { path : "expriance" , element : <Consultation_doctor_expariance/>},
-                    { path : "education" , element : <Consultation_doctor_education/>},
-                  ]
-                }
+                { path : "Appointment/doctor/:doctorId/patient/:patientId", element : <Consultaion_doctor_appoinment/>},
+                { path : "doctor/:id", element: <Consultation_doctor_details />,
+                  children: [
+                    { index: true, element: <Navigate to="info" replace /> }, 
+                    { path: "info", element: <Consultation_doctor_info /> },
+                    { path: "expriance", element: <Consultation_doctor_expariance /> },
+                    { path: "education", element: <Consultation_doctor_education /> },
+                  ],
+                },
               ]
             },
             { path: 'staff/:staffId', element: <StaffDetails /> } // stafffff
@@ -159,7 +166,13 @@ const router = createBrowserRouter([
           { path : "dashboard", element : <User_dasboard/> },
           { path : "medicine", element : <User_medicine/> },
           { path : "travel", element : <User_travel/> },
-          { path : "doctor", element : <User_doctor/> },
+          { path : "doctor", element : <User_doctor/>,
+            children : [
+              { path : "token", element:<User_doctor_token/>},
+              { path : "complete", element:<User_doctor_checkup_complete/>},
+              { path : "history", element:<User_doctor_hostory/>},
+            ]
+           },
           { path : "order", element : <User_order/> },
           { path : "complete", element : <Complete_order/> },
           { path : "personal", element : <User_peronal/> },
@@ -255,6 +268,7 @@ const router = createBrowserRouter([
         path : "consultation" , element : <ConsultationLayout/>,
         children : [
           { path : "dashboard", element : <Consultation_Dashboard/>},
+          { path : "user", element : <Consultation_user_to_doctor/>},
           { path : "doctor", element : <Consultation_doctor_list/>},
           { path : "doctor/:id", element : <Consultation_view_doctor/>},
           { path : "spespalist", element : <Consultation_spespalist/>},

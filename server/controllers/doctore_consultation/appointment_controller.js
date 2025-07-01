@@ -1,99 +1,187 @@
-import Appointment from '../models/Appointment.js';
+import Appointment from '../../models/doctor_consultation/appointment_schema.js';
+import Doctor from '../../models/doctor_consultation/doctor_schema.js'
+import fs from 'fs';
+import path from 'path';
+import mongoose from 'mongoose';
 
-// @desc    Create a new appointment
-// @route   POST /api/appointments
-// @access  Public or Authenticated User
+// 📁 Helper to delete a file from public/appointment
+const deleteFile = (filename) => {
+  const filePath = path.join('public', 'appointment', filename);
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error('Failed to delete file:', filePath);
+    } else {
+      console.log('Deleted file:', filePath);
+    }
+  });
+};
+
+// ✅ Create Appointment
 export const createAppointment = async (req, res) => {
   try {
-    const appointment = new Appointment(req.body);
-    const savedAppointment = await appointment.save();
-    res.status(201).json(savedAppointment);
+    const {
+      patientName,
+      age,
+      weight,
+      address,
+      patientId,
+      doctorId,
+      appointmentDate,
+      notes,
+    } = req.body;
+
+    console.log("called!");
+
+    const doctor = await Doctor.findById({_id:doctorId})
+    if(!doctor) {
+        return res.status(404).json("Doctor not found!")
+    }
+    
+
+    const files = req.files || []; // Assuming multer is used
+
+    const reports = files.map((file) => file.filename);
+
+    const newAppointment = new Appointment({
+      patientName,
+      age,
+      weight,
+      address,
+      patientId,
+      doctorId,
+      appointmentDate,
+      notes,
+      reports,
+    });
+
+    
+    await newAppointment.save();
+
+    res.status(201).json(newAppointment);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error creating appointment:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// @desc    Get all appointments (admin or for dashboard)
-// @route   GET /api/appointments
-// @access  Admin
+// ✅ Get All Appointments
 export const getAllAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find()
-      .populate('patientId', 'name email')
-      .populate('doctorId', 'name specialization');
+      .populate('patientId')
+      .populate('doctorId')
+      .sort({ createdAt: -1 });
+
     res.status(200).json(appointments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// @desc    Get appointment by ID
-// @route   GET /api/appointments/:id
-// @access  Authenticated
-export const getAppointmentById = async (req, res) => {
+// ✅ Get Appointments by User ID
+export const getAppointmentsByUserId = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id)
-      .populate('patientId', 'name email')
-      .populate('doctorId', 'name specialization');
-    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    res.status(200).json(appointment);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    const { userId } = req.params;
 
-// @desc    Get appointments by patient ID
-// @route   GET /api/appointments/patient/:patientId
-// @access  Authenticated User
-export const getAppointmentsByPatient = async (req, res) => {
-  try {
-    const appointments = await Appointment.find({ patientId: req.params.patientId })
-      .populate('doctorId', 'name specialization');
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const appointments = await Appointment.find({ patientId: userId })
+      .populate('doctorId')
+      .sort({ createdAt: -1 });
+
     res.status(200).json(appointments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// @desc    Get appointments by doctor ID
-// @route   GET /api/appointments/doctor/:doctorId
-// @access  Doctor
-export const getAppointmentsByDoctor = async (req, res) => {
+// ✅ Get Appointments by Doctor ID
+export const getAppointmentsByDoctorPhone = async (req, res) => {
   try {
-    const appointments = await Appointment.find({ doctorId: req.params.doctorId })
-      .populate('patientId', 'name email');
+    const { phone } = req.params;
+
+    // Find doctor by phone
+    const doctor = await Doctor.findOne({ phone });
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found!' });
+    }
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(doctor._id)) {
+      return res.status(400).json({ message: 'Invalid doctor ID' });
+    }
+
+    // Find appointments for doctor
+    const appointments = await Appointment.find({ doctorId: doctor._id })
+      .populate('patientId')
+      .populate('doctorId')
+      .sort({ createdAt: -1 });
+
     res.status(200).json(appointments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching appointments:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// @desc    Update appointment (status or notes)
-// @route   PATCH /api/appointments/:id
-// @access  Admin / Doctor
-export const updateAppointment = async (req, res) => {
+
+
+
+// ✅ Search Appointments by Patient Name
+export const searchAppointments = async (req, res) => {
   try {
+    const { keyword } = req.query;
+
+    const regex = new RegExp(keyword, 'i');
+    const results = await Appointment.find({ patientName: regex })
+      .populate('doctorId')
+      .populate('patientId');
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: 'Search failed' });
+  }
+};
+
+// ✅ Update Appointment Status
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
     const updated = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+      id,
+      { status },
+      { new: true }
     );
-    if (!updated) return res.status(404).json({ message: 'Appointment not found' });
+
     res.status(200).json(updated);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ message: 'Update failed' });
   }
 };
 
-// @desc    Delete appointment
-// @route   DELETE /api/appointments/:id
-// @access  Admin
+// ✅ Delete Appointment & Reports
 export const deleteAppointment = async (req, res) => {
   try {
-    const deleted = await Appointment.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Appointment not found' });
-    res.status(200).json({ message: 'Appointment deleted successfully' });
+    const { id } = req.params;
+    const appointment = await Appointment.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Delete attached report files
+    appointment.reports.forEach((filename) => {
+      deleteFile(filename);
+    });
+
+    await appointment.deleteOne();
+    res.status(200).json({ message: 'Appointment deleted' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Delete failed' });
   }
 };

@@ -13,6 +13,7 @@ import saffRoute from './routes/staff_Routes.js'
 import HospitalRoute from './routes/travel/hospital_travel_route.js'
 import Travelapply from './routes/travel/medical_travel_route.js'
 import Counsaltation from './routes/doctor_consultation/doctor_route.js'
+import appointmentRoute from './routes/doctor_consultation/appointment_route.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +51,7 @@ app.use('/api/staff', saffRoute)
 app.use('/api/hospital', HospitalRoute)
 app.use('/api/travel',Travelapply)
 app.use('/api/consultation', Counsaltation)
+app.use('/api/appointment', appointmentRoute)
 
 
 // Routes

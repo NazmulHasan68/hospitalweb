@@ -46,7 +46,7 @@ router.post('/payment/fail/:transactionId', paymentFail);
 router.post('/payment/cancel/:transactionId', paymentCancel);
 
 router.get('/medicines/orders', getAllorders);
-router.get('/medicine/:id', getMedicineById);
+router.get('/medicine/:id', isAuthenticated, getMedicineById);
 // router.get('')
 router.put('/:orderId/status', updateOrderStatus);
 router.delete('/:orderId', deleteOrder);

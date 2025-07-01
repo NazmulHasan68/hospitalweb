@@ -120,12 +120,20 @@ export const authApi = createApi({
         }),
 
 
-        getAllStudent:builder.query({
+        getAll:builder.query({
             query : ()=>({
                 url : "/get-all-student",
                 method : "GET"
             })
-        })
+        }),
+
+        updateRole: builder.mutation({
+        query: ({ id, role }) => ({
+            url: `/updaterole/${id}`,
+            method: 'PATCH',
+            body: { role },
+        }),
+        }),
     })
 });
 export const {
@@ -138,5 +146,6 @@ export const {
     useForgetPasswordMutation,
     useForgotPasswordCodeMutation,
     useResetPasswordMutation,
-    useGetAllStudentQuery
+    useGetAllQuery,
+    useUpdateRoleMutation
 } = authApi;

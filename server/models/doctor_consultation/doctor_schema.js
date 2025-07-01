@@ -45,22 +45,22 @@ function isWithinNext2HoursUntilEnd(checkupDateArray, checkupStartTime, checkupE
 const doctorSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    specialization: { type: String },
-    hospital: { type: String },
+    specialization: { type: String, required:true },
+    hospital: { type: String , required:true},
     phone: { type: String, required: true },
     email: { type: String, required: true },
 
-    fees: { type: Number },
+    fees: { type: Number , required:true},
     recheckFees: { type: Number, default: 0 },
 
-    age: { type: Number },
-    experience: { type: Number }, // total years
+    age: { type: Number , required:true},
+    experience: { type: Number, required:true }, // total years
 
     // Array of allowed day strings, e.g. ['mon', 'wed']
-    checkupDate: [{ type: String, enum: ['sun','mon','tue','wed','thu','fri','sat'] }],
-    checkupType: { type: String, enum: ['online', 'in-person', 'both'] },
-    checkupStartTime: { type: String }, // Format "HH:mm"
-    checkupEndTime: { type: String },
+    checkupDate: [{ type: String, enum: ['sun','mon','tue','wed','thu','fri','sat'] , required:true}],
+    checkupType: { type: String, enum: ['online', 'in-person', 'both'] , required:true},
+    checkupStartTime: { type: String, required:true }, // Format "HH:mm"
+    checkupEndTime: { type: String, required:true },
 
     isActive: { type: Boolean, default: false },
     isFree: { type: Boolean, default: false },
@@ -82,7 +82,7 @@ const doctorSchema = new mongoose.Schema(
     degree: [{ type: String }],
     govtLicense: [{ type: String }],
 
-    bio: { type: String, default: "" },
+    bio: { type: String, default: "" , required:true},
     photo: { type: String, default: "" },
     cv: { type: String, default: "" },
 

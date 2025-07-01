@@ -1,22 +1,37 @@
 import express from 'express';
+import multer from 'multer';
 import {
   createAppointment,
   getAllAppointments,
-  getAppointmentById,
-  getAppointmentsByPatient,
-  getAppointmentsByDoctor,
-  updateAppointment,
-  deleteAppointment
-} from '../controllers/appointmentController.js';
+  getAppointmentsByUserId,
+  getAppointmentsByDoctorPhone,
+  searchAppointments,
+  updateAppointmentStatus,
+  deleteAppointment,
+} from '../../controllers/doctore_consultation/appointment_controller.js';
 
 const router = express.Router();
 
-router.post('/', createAppointment);
+// 📁 Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/appointment');
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + file.originalname;
+    cb(null, unique);
+  },
+});
+
+const upload = multer({ storage });
+
+// Routes
+router.post('/', upload.array('reports'), createAppointment);
 router.get('/', getAllAppointments);
-router.get('/:id', getAppointmentById);
-router.get('/patient/:patientId', getAppointmentsByPatient);
-router.get('/doctor/:doctorId', getAppointmentsByDoctor);
-router.patch('/:id', updateAppointment);
+router.get('/user/:userId', getAppointmentsByUserId);
+router.get('/doctor/:phone', getAppointmentsByDoctorPhone);
+router.get('/search', searchAppointments);
+router.patch('/status/:id', updateAppointmentStatus);
 router.delete('/:id', deleteAppointment);
 
 export default router;

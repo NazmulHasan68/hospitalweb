@@ -345,3 +345,27 @@ export const getallthestudent = async(req, res)=>{
 }
 
 
+export const updateRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.status(200).json({
+      message: 'Role updated successfully.',
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error('Update Role Error:', error);
+    res.status(500).json({ message: 'Server error while updating role.' });
+  }
+};

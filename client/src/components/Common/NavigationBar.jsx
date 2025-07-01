@@ -111,7 +111,10 @@ export default function NavigationBar() {
                             Consultation Panel
                           </Link>
                           <Link to={'medicine'} className="text-blue-500 hover:text-blue-700">
-                            medicine Panel
+                            Medicine Panel
+                          </Link>
+                           <Link to={'doctor'} className="text-blue-500 hover:text-blue-700">
+                            Doctor Panel
                           </Link>
                         </DropdownMenuItem>
                       ) : null

@@ -10,6 +10,9 @@ export default function User_medicine() {
     skip: !userId,
   });
 
+  console.log(orders);
+  
+
   const otherOrders = orders.filter(order => order.deliveryStatus !== 'delivered');
 
   if (isLoading) return <div className="p-4 text-center">⏳ Loading orders...</div>;

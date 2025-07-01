@@ -1,4 +1,5 @@
 import Doctor from '../../models/doctor_consultation/doctor_schema.js';
+import User from '../../models/user.model.js'
 import fs from 'fs';
 import path from 'path';
 
@@ -16,6 +17,15 @@ export const createDoctor = async (req, res) => {
   try {
     const data = req.body;
 
+    const user = await User.findOne({ phone: data.phone });
+    
+    if (!user) {
+      return res.status(404).json("Number is Invalid!");
+    }
+
+    if (user.role !== "doctor") {
+      return res.status(403).json("User role is not doctor");
+    }
 
     if (req.files) {
       if (req.files.photo) data.photo = req.files.photo[0].filename;

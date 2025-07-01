@@ -33,7 +33,7 @@ export default function Mobile_user_sidebar() {
       {/* Toggle Button */}
     <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-white rounded m-2 w-[380px] "
+        className="p-2 text-white rounded m-2 w-[350px] "
       >
         {isOpen ? (
           <X size={24} className='ml-80'/>

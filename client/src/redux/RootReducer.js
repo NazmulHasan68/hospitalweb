@@ -11,6 +11,7 @@ import { mediorderApi } from "./ApiController/medicineOrderApi";
 import { hospitalApi } from "./ApiController/Hospital";
 import { TravelApi } from "./ApiController/TravelApi";
 import { consultationApi } from "./ApiController/consaltaionAPi";
+import { appointmentApi } from "./ApiController/appointmentApi";
 
 // Persist config for cart only
 const cartPersistConfig = {
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   [hospitalApi.reducerPath]: hospitalApi.reducer,
   [TravelApi.reducerPath]: TravelApi.reducer,
   [consultationApi.reducerPath]: consultationApi.reducer,
+  [appointmentApi.reducerPath] : appointmentApi.reducer,
   auth: authReducer,
   cart: persistReducer(cartPersistConfig, cartReducer),
 });

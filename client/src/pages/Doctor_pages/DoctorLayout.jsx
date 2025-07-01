@@ -10,7 +10,7 @@ export default function ConsultationLayout() {
                 <div className='hidden md:block'>
                    <Doctor_Sidebar/>
                 </div>
-                <div className='md:hidden block'>
+                <div className='md:hidden block mt-4'>
                   <Mobile_doctor_sidebar/>
                 </div>
             </div>

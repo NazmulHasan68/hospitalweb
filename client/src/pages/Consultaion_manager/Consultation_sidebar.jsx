@@ -22,6 +22,7 @@ export default function Consultation_sidebar() {
     { label: 'Dashboard', icon: <LayoutDashboard size={20} />, to: '/consultation/dashboard' },
 
     { section: 'Management' },
+    { label: 'User List', icon: <Users size={20} />, to: '/consultation/user' },
     { label: 'Doctor List', icon: <Users size={20} />, to: '/consultation/doctor' },
 
     { section: 'Appointments' },
