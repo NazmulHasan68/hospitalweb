@@ -4,13 +4,13 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 export default function Consultation_doctor_Name({data}) {
   const navigate = useNavigate()
   const {data:user} = useLoadUserQuery()
-  console.log(user.user);
 
     const handleAppointment = ()=>{
         if(!user.user){
           alert("First Login then Back here ")
           navigate('/')
         }else{
+
           navigate(`/user_consultation/Appointment/doctor/${data._id}/patient/${user.user._id}`);
         }
     }

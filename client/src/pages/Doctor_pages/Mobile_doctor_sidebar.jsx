@@ -23,7 +23,6 @@ export default function Mobile_doctor_sidebar() {
 
     { section: 'Management' },
     { label: 'New patient', icon: <PackageSearch size={20} />, to: '/doctor/new_patient' },
-    { label: 'Return patient', icon: <Users size={20} />, to: '/doctor/return_patient' },
     { label: 'Member patient', icon: <Users size={20} />, to: '/doctor/member_patient' },
     { label: 'Shedule patient', icon: <Users size={20} />, to: '/doctor/shedule_patient' },
 
@@ -38,7 +37,7 @@ export default function Mobile_doctor_sidebar() {
   return (
     <div className="md:hidden block">
       {/* Top Bar with Menu */}
-      <div className="bg-blue-950 text-white flex justify-between items-center p-4 shadow-md">
+      <div className=" text-white flex justify-between items-center p-4 shadow-md">
         <img
           src={data?.user?.photoUrl}
           alt="profile"

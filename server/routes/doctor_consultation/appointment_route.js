@@ -1,7 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 import {
-  createAppointment,
   getAllAppointments,
   getAppointmentsByUserId,
   getAppointmentsByDoctorPhone,
@@ -9,7 +8,12 @@ import {
   updateAppointmentStatus,
   deleteAppointment,
   addAppointmentMessage,
+  appointmentOrder,
+  AppointmentpaymentSuccess,
+  AppointmentpaymentFail,
+  AppointmentpaymentCancel,
 } from '../../controllers/doctore_consultation/appointment_controller.js';
+import isAuthenticated from '../../middlewares/isAuthenticated.js';
 
 const router = express.Router();
 
@@ -27,7 +31,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-router.post('/', upload.array('reports'), createAppointment);
+router.post('/payment', upload.array('reports'), isAuthenticated, appointmentOrder)
+router.post(`/payment/success/:transactionId`, AppointmentpaymentSuccess);
+router.post(`/payment/fail/:transactionId`, AppointmentpaymentFail);
+router.post(`/payment/cancel/:transactionId`, AppointmentpaymentCancel);
+
+
+
+
 router.get('/', getAllAppointments);
 router.get('/user/:userId', getAppointmentsByUserId);
 router.get('/doctor/:phone', getAppointmentsByDoctorPhone);

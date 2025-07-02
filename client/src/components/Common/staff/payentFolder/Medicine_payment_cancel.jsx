@@ -16,10 +16,10 @@ export default function Medicine_payment_cancel() {
 
         <div className="mt-6">
           <button
-            onClick={() => navigate('/user_panel/dashboard')}
+            onClick={() => navigate('/user_medicine')}
             className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition duration-300"
           >
-            Back to Dashboard
+            Go Back and Order Again
           </button>
         </div>
 

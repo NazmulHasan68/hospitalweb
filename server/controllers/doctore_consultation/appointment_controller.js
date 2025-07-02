@@ -1,8 +1,180 @@
 import Appointment from '../../models/doctor_consultation/appointment_schema.js';
 import Doctor from '../../models/doctor_consultation/doctor_schema.js'
+import User from '../../models/user.model.js'
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
+import SSLCommerzPayment from "sslcommerz-lts";
+import { v4 as uuidv4 } from "uuid";
+
+
+
+// ==========================================
+// 1️⃣ Create Order (SSLCommerz Payment)
+// ==========================================
+export const appointmentOrder = async (req, res) => {
+  const store_id = process.env.STORE_ID;
+  const store_passwd = process.env.STORE_PASSWORD;
+  const is_live = false;
+
+  try {
+    const {
+      patientName,
+      age,
+      weight,
+      address,
+      patientId,
+      doctorId,
+      appointmentDate,
+      notes,
+      totalAmount,
+    } = req.body;
+
+    
+    const doctor = await Doctor.findById({_id:doctorId})
+    if(!doctor) {
+        return res.status(404).json("Doctor not found!")
+    }
+    
+    const files = req.files || []; 
+    const reports = files.map((file) => file.filename);
+
+    const userId = req.id;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json("User not found");
+
+    const transactionId = uuidv4();
+
+    // Step 1: Save pending appointment
+    await Appointment.create({
+      patientName,
+      age,
+      weight,
+      address,
+      patientId,
+      doctorId,
+      appointmentDate,
+      notes,
+      totalAmount,
+      reports,
+      transactionId,
+      paymentStatus: "pending",
+    });
+
+    // Step 2: Create payment
+    const payload = {
+      total_amount: totalAmount,
+      currency: 'BDT',
+      tran_id: transactionId,
+      success_url: `${process.env.BASE_URL}/api/appointment/payment/success/${transactionId}`,
+      fail_url: `${process.env.BASE_URL}/api/appointment/payment/fail/${transactionId}`,
+      cancel_url: `${process.env.BASE_URL}/api/appointment/payment/cancel/${transactionId}`,
+      ipn_url: `${process.env.BASE_URL}/api/appointment/payment/ipn/${transactionId}`,
+      shipping_method: 'Courier',
+      product_name: 'Doctor Appointment',
+      product_category: 'Healthcare',
+      product_profile: 'general',
+      cus_name: user.name || 'Customer',
+      cus_email: user.email || 'test@test.com',
+      cus_add1: address || 'Dhaka',
+      cus_phone: user.phone || '018********',
+      ship_name: 'Appointment',
+      ship_city: 'Dhaka',
+      ship_postcode: '1207',
+      ship_add1: address || 'Dhaka',
+      ship_country: 'Bangladesh',
+    };
+
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+    const apiResponse = await sslcz.init(payload);
+
+    if (!apiResponse?.GatewayPageURL) {
+      return res.status(500).json({ message: "Payment gateway error", details: apiResponse });
+    }
+
+    return res.json({ success: true, redirectUrl: apiResponse.GatewayPageURL });
+
+  } catch (error) {
+    console.error('🔴 SSLCommerz order error:', error);
+    res.status(500).json({ message: 'Failed to initiate payment' });
+  }
+};
+
+
+
+// ✅ Appointment success
+export const AppointmentpaymentSuccess = async (req, res) => {
+  const { transactionId } = req.params;
+
+  try {
+    const appointment = await Appointment.findOne({ transactionId });
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found!" });
+    }
+    appointment.paymentStatus = 'paid';
+    await appointment.save();
+    res.redirect(`${process.env.FRONTENDURL}/doctor/payment-success/${transactionId}`);
+
+  } catch (error) {
+    console.error("Payment success error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+export const AppointmentpaymentFail = async (req, res) => {
+  const { transactionId } = req.params;
+
+  try {
+    const appointment = await Appointment.findOne({ transactionId });
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found!" });
+    }
+
+    appointment.paymentStatus = 'failed';
+    await appointment.save();
+
+    res.redirect(`${process.env.FRONTENDURL}/doctor/payment-failed/${transactionId}`);
+  } catch (error) {
+    console.error("Payment fail error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+export const AppointmentpaymentCancel = async (req, res) => {
+  const { transactionId } = req.params;
+
+  try {
+    const appointment = await Appointment.findOne({ transactionId });
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found!" });
+    }
+
+    appointment.paymentStatus = 'cancelled';
+    await appointment.save();
+
+    res.redirect(`${process.env.FRONTENDURL}/doctor/payment-cancelled/${transactionId}`);
+  } catch (error) {
+    console.error("Payment cancel error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
+
+
+
+
 
 // 📁 Helper to delete a file from public/appointment
 const deleteFile = (filename) => {
@@ -16,53 +188,8 @@ const deleteFile = (filename) => {
   });
 };
 
-// ✅ Create Appointment
-export const createAppointment = async (req, res) => {
-  try {
-    const {
-      patientName,
-      age,
-      weight,
-      address,
-      patientId,
-      doctorId,
-      appointmentDate,
-      notes,
-    } = req.body;
 
-    console.log("called!");
 
-    const doctor = await Doctor.findById({_id:doctorId})
-    if(!doctor) {
-        return res.status(404).json("Doctor not found!")
-    }
-    
-
-    const files = req.files || []; // Assuming multer is used
-
-    const reports = files.map((file) => file.filename);
-
-    const newAppointment = new Appointment({
-      patientName,
-      age,
-      weight,
-      address,
-      patientId,
-      doctorId,
-      appointmentDate,
-      notes,
-      reports,
-    });
-
-    
-    await newAppointment.save();
-
-    res.status(201).json(newAppointment);
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
 
 // ✅ Get All Appointments
 export const getAllAppointments = async (req, res) => {

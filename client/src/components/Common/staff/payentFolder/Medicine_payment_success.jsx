@@ -16,7 +16,7 @@ export default function Medicine_payment_success() {
 
         <div className="mt-6">
           <button
-            onClick={() => navigate('/user_panel/complete')}
+            onClick={() => navigate('/user_panel/medicine')}
             className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition duration-300"
           >
             Go to Dashboard

@@ -23,7 +23,6 @@ export default function Doctor_Sidebar() {
 
     { section: 'Management' },
     { label: 'New patient', icon: <PackageSearch size={20} />, to: '/doctor/new_patient' },
-    { label: 'Return patient', icon: <Users size={20} />, to: '/doctor/return_patient' },
     { label: 'Member patient', icon: <Users size={20} />, to: '/doctor/member_patient' },
     { label: 'Shedule patient', icon: <Users size={20} />, to: '/doctor/shedule_patient' },
 
@@ -36,7 +35,7 @@ export default function Doctor_Sidebar() {
   ];
 
   return (
-    <aside className="bg-blue-950 text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
+    <aside className=" text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
       {/* Profile Section */}
       <Link
         to="/doctor/profile"

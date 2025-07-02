@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useGetConsultationsQuery } from "@/redux/ApiController/consaltaionAPi";
+import { Link } from "react-router-dom";
 
 export default function Consultation_speclist_section({ receivedData }) {
   const {
@@ -62,7 +63,7 @@ export default function Consultation_speclist_section({ receivedData }) {
       className="bg-white rounded-xl shadow-md p-4 mx-3"
       style={{ minHeight: "100px" }}
     >
-      <div className="grid grid-cols-[auto_1fr] gap-4 items-center">
+      <Link to={`/user_consultation/search`} className="grid grid-cols-[auto_1fr] gap-4 items-center">
         <img
           src={doctor.imageUrl}
           alt={doctor.name}
@@ -82,7 +83,7 @@ export default function Consultation_speclist_section({ receivedData }) {
             Age: <span className="font-medium">{doctor.age}</span>
           </p>
         </div>
-      </div>
+      </Link>
     </div>
   );
 

@@ -70,14 +70,12 @@ import Admin_add_banner from "./pages/Admin_pages/admin_control_page/Admin_add_b
 import Admin_profites from "./pages/Admin_pages/admin_control_page/Admin_profites";
 import Doctor_deashboard from "./pages/Doctor_pages/doctor_control_page/Doctor_deashboard";
 import Doctor_new_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_new_patient";
-import Doctor_return_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_return_patient";
 import Doctor_member_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_member_patient";
 import Doctor_shedule_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_shedule_patient";
 import Doctor_active_patient from "./pages/Doctor_pages/doctor_control_page/Doctor_active_patient";
 import Doctor_complte_treatment from "./pages/Doctor_pages/doctor_control_page/Doctor_complte_treatment";
 import Doctor_reject_treatment from "./pages/Doctor_pages/doctor_control_page/Doctor_reject_treatment";
 import Doctor_support_list from "./pages/Doctor_pages/doctor_control_page/Doctor_support_list";
-import User_dasboard from "./pages/User_Dashboard/UserDashoardController/User_dasboard";
 import User_medicine from "./pages/User_Dashboard/UserDashoardController/User_medicine";
 import User_travel from "./pages/User_Dashboard/UserDashoardController/User_travel";
 import User_doctor from "./pages/User_Dashboard/UserDashoardController/User_doctor";
@@ -100,7 +98,9 @@ import User_doctor_token from "./pages/User_Dashboard/UserDashoardController/Use
 import User_doctor_checkup_complete from "./pages/User_Dashboard/UserDashoardController/User_doctor_checkup_complete";
 import User_doctor_hostory from "./pages/User_Dashboard/UserDashoardController/User_doctor_hostory";
 import Consultation_user_to_doctor from "./pages/Consultaion_manager/consultation_control_page/Consultation_user_to_doctor";
-import User_test_slip from "./pages/User_Dashboard/UserDashoardController/User_test_slip";
+import Doctor_payement_successfully from "./components/Common/staff/payentFolder/Doctor_payement_successfully";
+import Doctor_payemnt_faild from "./components/Common/staff/payentFolder/Doctor_payemnt_faild";
+import Doctor_payment_cancelled from "./components/Common/staff/payentFolder/Doctor_payment_cancelled";
 
 
 
@@ -190,9 +190,9 @@ const router = createBrowserRouter([
       { path : `/travel/payment-cancel/:userId`, element : <Doctor_deashboard/>},
 
       //================================== doctor payemnt status ==================================
-      { path : `/doctor/payment-success/:userId`, element : <Doctor_deashboard/>},
-      { path : `/doctor/payment-failed/:userId`, element : <Doctor_deashboard/>},
-      { path : `/doctor/payment-cancel/:userId`, element : <Doctor_deashboard/>},
+      { path : `/doctor/payment-success/:userId`, element : <Doctor_payement_successfully/>},
+      { path : `/doctor/payment-failed/:userId`, element : <Doctor_payemnt_faild/>},
+      { path : `/doctor/payment-cancel/:userId`, element : <Doctor_payment_cancelled/>},
 
 
       {// ============================================ =========== this section is only for doctor 
@@ -200,7 +200,6 @@ const router = createBrowserRouter([
         children : [
           { path : "dashboard", element : <Doctor_deashboard/>},
           { path : "new_patient", element : <Doctor_new_patient/>},
-          { path : "return_patient", element : <Doctor_return_patient/>},
           { path : "member_patient", element : <Doctor_member_patient/>},
           { path : "shedule_patient", element : <Doctor_shedule_patient/>},
           { path : "active_patient", element : <Doctor_active_patient/>},

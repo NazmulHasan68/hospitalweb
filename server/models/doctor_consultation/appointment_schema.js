@@ -11,12 +11,13 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
     },
     weight: {
-      type: String, // You may use Number if strictly numeric
+      type: String, 
       required: true,
     },
     address: {
       type: String,
       required: true,
+      default : "Dhaka, Bangladesh",
     },
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +28,15 @@ const appointmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Doctor',
       required: true,
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'cancelled'],
+      default: 'pending',
     },
     messages: [
       {
@@ -54,6 +64,9 @@ const appointmentSchema = new mongoose.Schema(
         type: String, 
       },
     ],
+    transactionId : {
+      type : String
+    }
   },
   { timestamps: true }
 );

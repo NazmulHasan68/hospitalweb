@@ -16,10 +16,10 @@ export default function Medicine_payment_failed() {
 
         <div className="mt-6">
           <button
-            onClick={() => navigate('/user_panel/order')}
+            onClick={() => navigate('/user_medicine')}
             className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition duration-300"
           >
-            Go Back to Dashboard
+            Go Back and order again
           </button>
         </div>
 

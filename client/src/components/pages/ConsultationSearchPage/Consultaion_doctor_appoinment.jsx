@@ -17,6 +17,7 @@ export default function Consultaion_doctor_appoinment() {
     address: '',
     appointmentDate: '',
     notes: '',
+    totalAmount : '',
     reports: [],
   });
 
@@ -71,11 +72,17 @@ export default function Consultaion_doctor_appoinment() {
     form.append('notes', formData.notes || '');
     form.append('patientId', patientId);
     form.append('doctorId', doctorId);
+    form.append('totalAmount', doctor.fees);
     formData.reports.forEach(file => form.append('reports', file));
 
     try {
-      await addAppointment(form).unwrap();
+      const response = await addAppointment(form).unwrap();
       toast.success('Appointment submitted successfully!');
+       if (response.success && response.redirectUrl) {
+          window.location.href = response.redirectUrl;
+        } else {
+          toast.error("Something went wrong while initiating payment.");
+        }
       setFormData({
         patientName: '',
         age: '',

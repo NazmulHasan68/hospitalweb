@@ -93,11 +93,7 @@ export default function NavigationBar() {
                         User panel
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link to={'/user_panel/cost'} className="text-blue-500 hover:text-blue-700">
-                        Check Schedule
-                      </Link>
-                    </DropdownMenuItem>
+             
                     {
                       data?.user.role == 'admin' ? (
                         <DropdownMenuItem className="flex flex-col gap-2 items-start">

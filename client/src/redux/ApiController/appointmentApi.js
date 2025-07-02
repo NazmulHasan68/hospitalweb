@@ -14,7 +14,7 @@ export const appointmentApi = createApi({
     // ✅ Create new appointment
     addAppointment: builder.mutation({
       query: (formData) => ({
-        url: '/',
+        url: '/payment',
         method: 'POST',
         body: formData,
       }),
