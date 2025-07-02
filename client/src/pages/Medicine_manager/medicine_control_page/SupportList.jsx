@@ -1,66 +1,116 @@
-import React, { useState } from 'react';
 
-const generateSupportAgents = () =>
-  Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    name: `Support Agent ${i + 1}`,
-    email: `support${i + 1}@medicinehub.com`,
-    phone: `01700${(100000 + i).toString().slice(0, 6)}`,
-    role: ['Technical', 'Customer Care', 'Billing', 'General'][i % 4],
-    photo: `https://i.pravatar.cc/150?img=${i + 30}`,
-  }));
-
-const ITEMS_PER_PAGE = 12;
+import React, { useState, useMemo } from 'react';
+import { useGetAllHelpMessagesQuery } from '@/redux/ApiController/dashboardApi';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import dayjs from 'dayjs';
 
 export default function SupportList() {
-  const [page, setPage] = useState(1);
-  const agents = generateSupportAgents();
+  const { data, isLoading } = useGetAllHelpMessagesQuery();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(agents.length / ITEMS_PER_PAGE);
-  const currentAgents = agents.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
+  const entriesPerPage = 5;
+
+  const filtered = useMemo(() => {
+    if (!data?.data) return [];
+    return data.data.filter(entry =>
+      entry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.phone.includes(searchTerm)
+    );
+  }, [data, searchTerm]);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * entriesPerPage;
+    return filtered.slice(start, start + entriesPerPage);
+  }, [filtered, currentPage]);
+
+  const totalPages = Math.ceil(filtered.length / entriesPerPage);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold text-indigo-600 mb-6">🛠️ Support Agents</h2>
+    <div className="p-6 max-w-5xl mx-auto">
+      <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">Travel Support Messages</h2>
 
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {currentAgents.map((agent) => (
-          <div
-            key={agent.id}
-            className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center text-center hover:shadow-lg transition"
-          >
-            <img
-              src={agent.photo}
-              alt={agent.name}
-              className="w-20 h-20 rounded-full object-cover mb-3"
-            />
-            <h3 className="text-lg font-semibold text-gray-800">{agent.name}</h3>
-            <p className="text-sm text-gray-600">{agent.role}</p>
-            <p className="text-xs text-gray-500 mt-2">{agent.email}</p>
-            <p className="text-xs text-gray-500">{agent.phone}</p>
-          </div>
-        ))}
+      {/* Search bar */}
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          placeholder="Search by name or phone..."
+          className="w-full max-w-md"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 space-x-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setPage(i + 1)}
-            className={`px-3 py-1 rounded border ${
-              page === i + 1
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-indigo-600'
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
+      {/* Table */}
+      <div className="overflow-x-auto shadow border rounded-md bg-white">
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-gray-100 text-gray-700">
+            <tr>
+              <th className="px-4 py-2 text-left">Name</th>
+              <th className="px-4 py-2 text-left">Phone</th>
+              <th className="px-4 py-2 text-left">Time</th>
+              <th className="px-4 py-2 text-left">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="4" className="text-center py-6">Loading...</td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-6">No messages found.</td>
+              </tr>
+            ) : (
+              paginatedData.map((entry) => (
+                <tr key={entry._id} className="border-t">
+                  <td className="px-4 py-3">{entry.name}</td>
+                  <td className="px-4 py-3">{entry.phone}</td>
+                  <td className="px-4 py-3">{dayjs(entry.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="px-4 py-3">
+                    <Button onClick={() => setSelectedEntry(entry)}>View</Button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-4">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 border-blue-600'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Message Dialog */}
+      {selectedEntry && (
+        <Dialog open={true} onOpenChange={() => setSelectedEntry(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold text-blue-700">
+                Messages from {selectedEntry.name}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 mt-4 text-sm text-gray-700 max-h-80 overflow-y-auto">
+              {selectedEntry.messages.map((msg, idx) => (
+                <p key={idx} className="p-2 bg-blue-50 rounded">{msg}</p>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

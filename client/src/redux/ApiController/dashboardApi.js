@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const USER_API = `${import.meta.env.VITE_BASE_URL}/api`;  
+const USER_API = `${import.meta.env.VITE_BASE_URL}/api`;
 
 export const dashboardApi = createApi({
   reducerPath: "dashboardApi",
@@ -8,7 +8,7 @@ export const dashboardApi = createApi({
     baseUrl: USER_API,
     credentials: "include",
   }),
-  tagTypes: ["Dashboard"],
+  tagTypes: ["Dashboard", "HelpMessage"],
 
   endpoints: (builder) => ({
     getAdminDashboard: builder.query({
@@ -35,8 +35,34 @@ export const dashboardApi = createApi({
       query: () => "/dashboard/consultation-manager",
       providesTags: ["Dashboard"],
     }),
+
+    // ✅ GET all help messages
+    getAllHelpMessages: builder.query({
+      query: () => "/dashboard/getallmessage",
+      providesTags: ["HelpMessage"],
+    }),
+
+    // ✅ POST a new help message
+    sendHelpMessage: builder.mutation({
+      query: (body) => ({
+        url: "/dashboard/sendmessage",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["HelpMessage"],
+    }),
+
+    // ✅ DELETE a help message by ID
+    deleteHelpMessage: builder.mutation({
+      query: (id) => ({
+        url: `/dashboard/deletemessage/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["HelpMessage"],
+    }),
   }),
 });
+
 
 export const {
   useGetAdminDashboardQuery,
@@ -44,8 +70,7 @@ export const {
   useGetMedicineManagerDashboardQuery,
   useGetTravelManagerDashboardQuery,
   useGetConsultationManagerDashboardQuery,
+  useGetAllHelpMessagesQuery,
+  useSendHelpMessageMutation,
+  useDeleteHelpMessageMutation,
 } = dashboardApi;
-
-
-
-

@@ -17,7 +17,7 @@ export default function Profile_details() {
   const user = data?.user;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto mt-6">
       <h1 className="text-3xl font-semibold text-blue-800 mb-8 text-center">
         Admin Profile Overview
       </h1>

@@ -7,6 +7,7 @@ import Travel from "../models/medical_travel/medical_travel.js";
 import Doctor from "../models/doctor_consultation/doctor_schema.js";
 import Appointment from "../models/doctor_consultation/appointment_schema.js";
 import Prescription from "../models/doctor_consultation/prescription_schema.js";
+import HelpMessage from "../models/message_model.js";
 
 // ✅ Admin Dashboard
 export const Admindashbaord = async (req, res) => {
@@ -103,3 +104,81 @@ export const doctorDhasboard = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+
+
+
+
+export const sendHelpMessage = async (req, res) => {
+  try {
+    const { phone, name, message } = req.body;
+
+    if (!phone || !name || !message) {
+      return res.status(400).json({ success: false, message: 'All fields are required' });
+    }
+
+    const helpEntry = await HelpMessage.create({
+      phone,
+      name,
+      messages: [message],
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Help message saved successfully',
+      data: helpEntry,
+    });
+
+  } catch (error) {
+    console.error('Error saving help message:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+};
+
+export const getAllHelpMessages = async (req, res) => {
+  try {
+    const messages = await HelpMessage.find().sort({ createdAt: -1 }); // newest first
+    return res.status(200).json({
+      success: true,
+      message: 'All help messages fetched successfully',
+      data: messages,
+    });
+  } catch (error) {
+    console.error('Error fetching help messages:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+};
+
+export const deleteHelpMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await HelpMessage.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: 'Message not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Help message deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting help message:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+};
+
