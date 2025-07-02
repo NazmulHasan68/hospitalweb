@@ -8,6 +8,7 @@ import {
   searchAppointments,
   updateAppointmentStatus,
   deleteAppointment,
+  addAppointmentMessage,
 } from '../../controllers/doctore_consultation/appointment_controller.js';
 
 const router = express.Router();
@@ -33,5 +34,6 @@ router.get('/doctor/:phone', getAppointmentsByDoctorPhone);
 router.get('/search', searchAppointments);
 router.patch('/status/:id', updateAppointmentStatus);
 router.delete('/:id', deleteAppointment);
+router.post('/:appointmentId/message', upload.array('photo'), addAppointmentMessage)
 
 export default router;

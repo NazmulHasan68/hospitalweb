@@ -30,10 +30,11 @@ const appointmentSchema = new mongoose.Schema(
     },
     messages: [
       {
-        sender: { type: String, enum: ['patient', 'doctor'] },
-        subject: String,
-        message: String,
-        timestamp: { type: Date, default: Date.now }
+        sender: { type: String, enum: ['patient', 'doctor'], required: true },
+        subject: { type: String },
+        message: { type: String, required: true },
+        photo: [{ type: String }],
+        timestamp: { type: Date, default: Date.now },
       }
     ],
     appointmentDate: {
@@ -42,7 +43,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['wating', 'cancelled', 'meeting', 'completed'],
+      enum: ['wating', 'cancelled','shedule', 'meeting', 'completed'],
       default: 'wating',
     },
     notes: {

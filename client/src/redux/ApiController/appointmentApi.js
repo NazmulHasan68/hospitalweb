@@ -63,6 +63,17 @@ export const appointmentApi = createApi({
       }),
       invalidatesTags: ['Appointment'],
     }),
+
+    sendMessage: builder.mutation({
+      query: ({ appointmentId, body }) => ({
+        url: `/${appointmentId}/message`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Appointment'],
+    }),
+
+
   }),
 });
 
@@ -74,4 +85,5 @@ export const {
   useSearchAppointmentsQuery,
   useUpdateAppointmentStatusMutation,
   useDeleteAppointmentMutation,
+  useSendMessageMutation
 } = appointmentApi;

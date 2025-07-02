@@ -100,6 +100,7 @@ import User_doctor_token from "./pages/User_Dashboard/UserDashoardController/Use
 import User_doctor_checkup_complete from "./pages/User_Dashboard/UserDashoardController/User_doctor_checkup_complete";
 import User_doctor_hostory from "./pages/User_Dashboard/UserDashoardController/User_doctor_hostory";
 import Consultation_user_to_doctor from "./pages/Consultaion_manager/consultation_control_page/Consultation_user_to_doctor";
+import User_test_slip from "./pages/User_Dashboard/UserDashoardController/User_test_slip";
 
 
 
@@ -163,7 +164,6 @@ const router = createBrowserRouter([
       {// ============================================ ========= this section is only for controler section
         path : "user_panel", element : <UserControllerLayout/>,
         children : [
-          { path : "dashboard", element : <User_dasboard/> },
           { path : "medicine", element : <User_medicine/> },
           { path : "travel", element : <User_travel/> },
           { path : "doctor", element : <User_doctor/>,

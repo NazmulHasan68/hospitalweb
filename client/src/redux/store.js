@@ -18,6 +18,7 @@ import {
 } from 'redux-persist';
 import { consultationApi } from './ApiController/consaltaionAPi';
 import { appointmentApi } from './ApiController/appointmentApi';
+import { prescriptionApi } from './ApiController/prescriptionApi';
 
 
 
@@ -36,7 +37,8 @@ export const appStore = configureStore({
       hospitalApi.middleware,
       TravelApi.middleware,
       consultationApi.middleware,
-      appointmentApi.middleware
+      appointmentApi.middleware,
+      prescriptionApi.middleware
     ),
 });
 

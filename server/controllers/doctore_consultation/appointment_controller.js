@@ -185,3 +185,56 @@ export const deleteAppointment = async (req, res) => {
     res.status(500).json({ message: 'Delete failed' });
   }
 };
+
+
+
+
+
+
+
+
+
+export const addAppointmentMessage = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const { subject, message, sender } = req.body;
+
+    if (!sender || !message) {
+      return res.status(400).json({ error: 'Sender and message are required' });
+    }
+
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    // 🖼 Collect photo paths (relative)
+    let uploadedPhotos = [];
+    if (req.files && req.files.length > 0) {
+      uploadedPhotos = req.files.map((file) =>
+        path.join('/public/appointment/', file.filename)
+      );
+    }
+
+    // 📨 Create message
+    const newMessage = {
+      sender,
+      subject,
+      message,
+      photo: uploadedPhotos, 
+      timestamp: new Date(),
+    };
+
+    appointment.messages.push(newMessage);
+    await appointment.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Message added successfully',
+      data: newMessage,
+    });
+  } catch (err) {
+    console.error('Error adding message:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}

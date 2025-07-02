@@ -18,7 +18,6 @@ export default function UserSidebar() {
   const isActive = (path) => location.pathname === path;
 
   const menuItems = [
-    { label: 'Dashboard', icon: <LayoutDashboard size={20} />, to: '/user_panel/dashboard' },
     { label: 'Medicine', icon: <PackageSearch size={20} />, to: '/user_panel/medicine' },
     { label: 'Travel ', icon: <Users size={20} />, to: '/user_panel/travel' },
     { label: 'Doctor Schedule', icon: <ClipboardList size={20} />, to: '/user_panel/doctor' },
