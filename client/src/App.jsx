@@ -101,6 +101,7 @@ import Consultation_user_to_doctor from "./pages/Consultaion_manager/consultatio
 import Doctor_payement_successfully from "./components/Common/staff/payentFolder/Doctor_payement_successfully";
 import Doctor_payemnt_faild from "./components/Common/staff/payentFolder/Doctor_payemnt_faild";
 import Doctor_payment_cancelled from "./components/Common/staff/payentFolder/Doctor_payment_cancelled";
+import Profile_details from "./components/Common/Profile_details";
 
 
 
@@ -194,7 +195,7 @@ const router = createBrowserRouter([
       { path : `/doctor/payment-failed/:userId`, element : <Doctor_payemnt_faild/>},
       { path : `/doctor/payment-cancel/:userId`, element : <Doctor_payment_cancelled/>},
 
-
+      { path : '/profile', element : <Profile_details/> },
       {// ============================================ =========== this section is only for doctor 
         path : "doctor" , element : <DoctorLayout/>,
         children : [

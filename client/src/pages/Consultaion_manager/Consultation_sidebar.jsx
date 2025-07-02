@@ -41,7 +41,7 @@ export default function Consultation_sidebar() {
     <aside className="bg-blue-950 text-white shadow-lg rounded-xl p-4 w-full max-w-xs  sticky top-0">
       {/* Profile Section */}
       <Link
-        to="/travel/profile"
+        to="/profile"
         className="flex items-center gap-4 mb-6 border-b border-blue-800 mt-6 pb-4 hover:opacity-90 transition"
       >
         <img

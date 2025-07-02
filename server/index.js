@@ -15,6 +15,7 @@ import Travelapply from './routes/travel/medical_travel_route.js'
 import Counsaltation from './routes/doctor_consultation/doctor_route.js'
 import appointmentRoute from './routes/doctor_consultation/appointment_route.js'
 import prescriptionRoute from './routes/doctor_consultation/prescription_route.js'
+import dashboardRoute from './routes/dashboardRoute.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,6 +55,7 @@ app.use('/api/travel',Travelapply)
 app.use('/api/consultation', Counsaltation)
 app.use('/api/appointment', appointmentRoute)
 app.use('/api/prescription', prescriptionRoute)
+app.use('/api/dashboard', dashboardRoute)
 
 
 

@@ -19,6 +19,7 @@ import {
 import { consultationApi } from './ApiController/consaltaionAPi';
 import { appointmentApi } from './ApiController/appointmentApi';
 import { prescriptionApi } from './ApiController/prescriptionApi';
+import { dashboardApi } from './ApiController/dashboardApi';
 
 
 
@@ -38,7 +39,8 @@ export const appStore = configureStore({
       TravelApi.middleware,
       consultationApi.middleware,
       appointmentApi.middleware,
-      prescriptionApi.middleware
+      prescriptionApi.middleware,
+      dashboardApi.middleware
     ),
 });
 

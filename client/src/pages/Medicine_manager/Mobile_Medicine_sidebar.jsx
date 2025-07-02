@@ -40,7 +40,7 @@ export default function Mobile_Medicine_sidebar() {
       {/* Top Section with Profile and Menu Button */}
       <div className="flex justify-between items-center bg-gray-900 px-4 py-6">
         <Link
-          to="/medicine/profile"
+          to="/profile"
           onClick={closeSidebar}
           className="flex items-center gap-4"
         >

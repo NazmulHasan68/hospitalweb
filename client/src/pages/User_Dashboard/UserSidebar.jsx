@@ -29,7 +29,7 @@ export default function UserSidebar() {
     <aside className="h-screen text-white shadow-lg rounded-xl p-4 w-full max-w-xs sticky top-0 hidden md:block">
       {/* Profile Section */}
       <Link
-        to="/user_panel/personal"
+        to="/personal"
         className="flex items-center gap-4 mb-6 border-b border-blue-800 mt-6 pb-4 hover:opacity-90 transition"
       >
         <img

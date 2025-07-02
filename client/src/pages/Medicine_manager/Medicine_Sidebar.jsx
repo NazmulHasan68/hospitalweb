@@ -36,7 +36,7 @@ export default function Medicine_Sidebar() {
     <aside className=" shadow-md rounded-xl p-4 w-full max-w-xs h-screen sticky top-0">
       {/* Profile Section */}
       <Link
-        to="/medicine/profile"
+        to="/profile"
         className="flex items-center gap-4 mb-6 border-b mt-6 pb-4 hover:opacity-90 transition"
       >
         <img
