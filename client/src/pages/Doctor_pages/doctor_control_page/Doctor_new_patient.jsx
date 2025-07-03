@@ -29,8 +29,8 @@ export default function Doctor_new_patient() {
     isError,
     error,
   } = useGetAppointmentsByDoctorPhoneQuery(user?.user?.phone, {
-    skip: !user?.user?.phone,
-  });
+  pollingInterval: 1000, 
+});
 
   const [sendMessage] = useSendMessageMutation();
 

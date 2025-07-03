@@ -20,8 +20,8 @@ import User_prescription from './User_prescription';
 export default function User_doctor_token() {
   const { data: user } = useLoadUserQuery();
   const { data: appointments } = useGetAppointmentsByUserIdQuery(user?.user?._id, {
-    skip: !user?.user?._id,
-  });
+  pollingInterval: 1000, 
+});
 
   const [sendMessage] = useSendMessageMutation();
   const [formStates, setFormStates] = useState({});

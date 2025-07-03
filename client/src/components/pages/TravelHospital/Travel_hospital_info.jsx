@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useGetHospitalByIdQuery } from '@/redux/ApiController/Hospital';
 import { MapPin, Bed, Hospital, Globe, Info } from 'lucide-react';
 
@@ -11,8 +11,10 @@ export default function Travel_hospital_info() {
   if (isError || !hospital) return <p className="text-center text-red-600">Failed to load hospital details.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-
+    <div className="max-w-5xl mx-auto p-6 space-y-6 text-center">
+      <Link to={'/user_travel/hospital/apply'} className='px-6 py-2 bg-sky-400 hover:bg-sky-600 rounded-sm text-slate-50 text-center '>
+        Apply Now
+      </Link>
       {/* Info Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <InfoBox icon={<Globe />} label="Country" value={hospital.country} />

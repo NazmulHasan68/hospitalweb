@@ -14,6 +14,7 @@ export default function Contact_section() {
 
   const [form, setForm] = useState({
     name: data?.user?.name || '',
+    phone : data?.user?.phone || '',
     message: '',
   });
 
@@ -81,7 +82,7 @@ export default function Contact_section() {
                 rows={6}
                 value={form.message}
                 onChange={handleChange}
-                placeholder="আপনার বার্তা লিখুন"
+                placeholder="আপনার বার্তা লিখুন sdf"
                 className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                 required
               ></textarea>

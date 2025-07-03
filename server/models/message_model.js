@@ -14,7 +14,11 @@ const helpMessageSchema = new mongoose.Schema({
       type: String,
       required: true,
     }
-  ]
+  ],
+  isReplied : {
+    type : Boolean,
+    default : false
+  }
 }, {
   timestamps: true 
 });

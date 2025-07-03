@@ -182,3 +182,34 @@ export const deleteHelpMessage = async (req, res) => {
   }
 };
 
+export const updateHelpMessageRepliedStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isReplied } = req.body;
+
+    const updated = await HelpMessage.findByIdAndUpdate(
+      id,
+      { isReplied },
+      { new: true } // return the updated document
+    );
+
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Help message not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Replied status updated successfully',
+      data: updated,
+    });
+  } catch (error) {
+    console.error('Error updating help message:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+};

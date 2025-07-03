@@ -34,6 +34,7 @@ export default function Admin_sidebar() {
     { label: 'Medicine', icon: <ClipboardList size={20} />, to: '/admin/medicine', color: 'text-blue-400' },
     { label: 'Travel', icon: <Loader size={20} />, to: '/admin/travel', color: 'text-yellow-400' },
     { label: 'Ads & Banners', icon: <CheckCircle size={20} />, to: '/admin/add_banner', color: 'text-pink-400' },
+    { label: 'Support', icon: <CheckCircle size={20} />, to: '/admin/support', color: 'text-pink-400' },
   ];
 
   return (

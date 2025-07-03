@@ -30,8 +30,6 @@ export default function Doctor_Sidebar() {
     { label: 'Complete Treatment', icon: <ClipboardList size={20} />, to: '/doctor/complete_treatment', color: 'text-blue-500' },
     { label: 'Reject Treatment', icon: <ClipboardList size={20} />, to: '/doctor/reject_treatment', color: 'text-blue-500' },
 
-    { section: 'System' },
-    { label: 'Support List', icon: <Headphones size={20} />, to: '/doctor/support_list' },
   ];
 
   return (

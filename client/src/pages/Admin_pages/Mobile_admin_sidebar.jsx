@@ -36,6 +36,7 @@ export default function Mobile_admin_sidebar() {
     { label: 'Medicine', icon: <ClipboardList size={18} />, to: '/admin/medicine' },
     { label: 'Travel', icon: <Loader size={18} />, to: '/admin/travel' },
     { label: 'Ads & Banners', icon: <CheckCircle size={18} />, to: '/admin/add_banner' },
+    { label: 'Support', icon: <CheckCircle size={20} />, to: '/admin/support' },
   ];
 
   return (

@@ -20,6 +20,7 @@ import { consultationApi } from './ApiController/consaltaionAPi';
 import { appointmentApi } from './ApiController/appointmentApi';
 import { prescriptionApi } from './ApiController/prescriptionApi';
 import { dashboardApi } from './ApiController/dashboardApi';
+import { bannerApi } from './ApiController/bannerApi';
 
 
 
@@ -40,7 +41,8 @@ export const appStore = configureStore({
       consultationApi.middleware,
       appointmentApi.middleware,
       prescriptionApi.middleware,
-      dashboardApi.middleware
+      dashboardApi.middleware,
+      bannerApi.middleware,
     ),
 });
 

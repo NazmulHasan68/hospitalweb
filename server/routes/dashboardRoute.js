@@ -8,6 +8,7 @@ import {
   sendHelpMessage,
   getAllHelpMessages,
   deleteHelpMessage,
+  updateHelpMessageRepliedStatus,
 } from '../controllers/dashboard_controller.js';
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.get('/doctor', doctorDhasboard);
 
 router.post('/sendmessage', sendHelpMessage); // ✅ should be POST
 router.get('/getallmessage', getAllHelpMessages);
+router.patch('/updatereplied/:id', updateHelpMessageRepliedStatus);
 router.delete('/deletemessage/:id', deleteHelpMessage); // ✅ should use :id param
 
 

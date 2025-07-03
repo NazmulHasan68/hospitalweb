@@ -60,6 +60,17 @@ export const dashboardApi = createApi({
       }),
       invalidatesTags: ["HelpMessage"],
     }),
+
+    // ✅ PATCH to update isReplied status
+    updateHelpMessageRepliedStatus: builder.mutation({
+      query: ({ id, isReplied }) => ({
+        url: `/dashboard/updatereplied/${id}`,
+        method: 'PATCH',
+        body: { isReplied },
+      }),
+      invalidatesTags: ['HelpMessage'],
+    }),
+
   }),
 });
 
@@ -73,4 +84,5 @@ export const {
   useGetAllHelpMessagesQuery,
   useSendHelpMessageMutation,
   useDeleteHelpMessageMutation,
+  useUpdateHelpMessageRepliedStatusMutation
 } = dashboardApi;

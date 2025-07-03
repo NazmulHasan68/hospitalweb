@@ -195,6 +195,8 @@ const router = createBrowserRouter([
       { path : `/doctor/payment-failed/:userId`, element : <Doctor_payemnt_faild/>},
       { path : `/doctor/payment-cancel/:userId`, element : <Doctor_payment_cancelled/>},
 
+      
+
       { path : '/profile', element : <Profile_details/> },
       {// ============================================ =========== this section is only for doctor 
         path : "doctor" , element : <DoctorLayout/>,
@@ -224,6 +226,7 @@ const router = createBrowserRouter([
           { path : "consultation", element : <Admin_consultation/>},
           { path : "profits", element : <Admin_profites/>},
           { path : "add_banner", element : <Admin_add_banner/>},
+          { path : "support", element : <SupportList/>}
         ]
       },
 
