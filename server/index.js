@@ -60,7 +60,6 @@ app.use('/api/dashboard', dashboardRoute)
 app.use('/api/banner', bannerRoute)
 
 
-
 // Routes
 app.get('/', (req, res) => {
   res.send('GrowCare Backend Running');
