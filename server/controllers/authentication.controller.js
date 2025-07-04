@@ -340,7 +340,7 @@ export const getallthestudent = async(req, res)=>{
         const student = await User.find({})
         return res.status(200).json({student})
     } catch (error) {
-        return res.status(500).json({ success: false, message: "All student get", error: error.message });
+        return res.status(500).json({ success: false, message: "All student gets", error: error.message });
     }
 }
 
